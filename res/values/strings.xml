@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Physical Button Music Control</string>
+    <string name="title_pbsettings">PBMC Settings</string>
+    <string name="title_pbmain">PBMC Key Chains</string>
+    <string name="app_desc">Control your media player easily!</string>
+
+    <string name="diag_cnf_t">Confirm action</string>
+    <string name="diag_cnf_rmv">Do you really want to remove this chain?</string>
+    <string name="diag_cnf_dng">Overriding this key can be dangerous, do you really want to continue?</string>
+    <string name="diag_sel_act">Pick an action</string>
+    <string name="diag_cur_key">Current key:</string>
+    <string name="diag_no_key">No key detected</string>
+    <string name="diag_sel_key">Pick a key</string>
+    <string name="diag_nm_hnt">Name this chain</string>
+    <string name="diag_add_key">Add key</string>
+    <string name="diag_tgl_itc">Change</string>
+    <string name="diag_sel_au">Choose audio modes</string>
+    <string name="diag_sel_md">Choose screen modes</string>
+    <string name="diag_edt_itn">Enter custom intent URI</string>
+    <string name="diag_itn_err">Entered URI is invalid and couldn\'t be parsed</string>
+    
+    <string name="diag_sts">Status</string>
+    <string name="diag_md">Mode</string>
+    <string name="diag_au">Audio</string>
+    <string name="diag_act">Action</string>
+    <string name="diag_dl">Delay</string>
+    <string name="diag_nm">Name</string>
+    <string name="diag_key">Keys</string>
+    <string name="diag_vib">Vibration</string>
+    <string name="diag_ccl">Cancels original key functions</string>
+    
+    <string name="diag_yes">Yes</string>
+    <string name="diag_no">No</string>
+    <string name="diag_ok">OK</string>
+    <string name="diag_cancel">Cancel</string>
+	<string name="diag_sav">Saved</string>
+	<string name="diag_nsav">Not saved</string>
+    <string name="diag_alw">Always</string>
+    <string name="diag_nev">Never</string>
+    <string name="diag_rmv">Delete</string>
+	
+    <string name="act_single">Single press</string>
+    <string name="act_double">Double press</string>
+    <string name="act_triple">Triple press</string>
+    <string name="act_hold">Hold</string>
+    <string name="act_xhold">and hold</string>
+    <string name="act_delay">Delay/hold time:</string>
+    
+    <string-array name="au_items">
+        <item>Internal speaker</item>
+        <item>Wired headset</item>
+        <item>Bluetooth headset</item>
+    </string-array>
+
+    <string-array name="md_items">
+        <item>Screen off</item>
+        <item>Lockscreen</item>
+        <item>Screen on</item>
+    </string-array>
+    
+    <string name="diag_reboot">You need to activate this module in the Xposed Installer and reboot your device to complete the installation process.</string>
+    <!-- Use '\n' for line breaks. -->
+    <string name="diag_update">You need to reboot your device to complete the updating process.\n
+Installed version: %1$s\n
+Active version: %2$s</string>
+    
+    <string name="tab_chns">Chain list</string>
+    <string name="tab_edit">Edit:</string>
+    
+    <string name="key_pressed">Pressed</string>
+    <string name="key_released">Released</string>
+    
+    <string name="btn_setts">Settings</string>
+    <string name="btn_newch">Add chain</string>
+    <string name="btn_savech">Save chains</string>
+    
+    <string-array name="action_k">
+        <item>Do nothing</item>
+        <item>Media controls</item>
+        <item>Keypress</item>
+        <item>Extra actions</item>
+        <item>Other</item>
+    </string-array>
+    
+    <string-array name="action_other_k">
+        <item>Launch application</item>
+        <item>Launch activity</item>
+        <item>Launch shortcut</item>
+        <item>Custom intent URI</item>
+    </string-array>
+    
+    <string-array name="action_media_k">
+        <item>Play/Pause media</item>
+        <item>Next media</item>
+        <item>Previous media</item>
+        <item>Music volume up</item>
+        <item>Music volume down</item>
+        <item>Fast forward</item>
+        <item>Rewind</item>
+    </string-array>
+    
+    <string-array name="action_coded_k">
+        <item>Soft reboot</item>
+        <item>Toggle flashlight</item>
+    </string-array>
+
+    <string name="pref_useplugin_t">Plug &amp; Play</string>
+    <string name="pref_useplugin_s">Send a play media signal when audio devices get connected</string>
+
+    <string name="pref_setplayer_t">Media signal receiver</string>
+    <string name="pref_setplayer_s">Pick an application that will receive media signals</string>
+    <string name="pref_setplayer_v1">Let the system decide</string>
+    <string name="pref_setplayer_v2">Use last media player from recents</string>
+    
+    <string name="pref_setplrmode_t">Signal send options</string>
+    <string name="pref_setplrmode_s">Some applications may need a launched activity to work properly</string>
+    <string-array name="pref_setplrmode_e">
+        <item>No special action</item>
+        <item>Launch activity</item>
+        <item>Running activity only</item>
+    </string-array>
+    
+    <string name="pref_usestartvol_t">Enable starting volume</string>
+    <string name="pref_usestartvol_s">Enable changing media volume on play signals</string>
+
+    <string name="pref_startvol_d">Media volume on play signals</string>
+    <string name="pref_startvol_s">Set media volume on play signals</string>
+    <string name="pref_startvol_t">Starting volume</string>
+
+    <string name="pref_g_general">General options</string>
+    <string name="pref_hideapp_t">Hide app icon</string>
+    <string name="pref_hideapp_s">Hide the \"%1$s\" icon from the app drawer</string>
+    
+    <string name="pref_g_fixes">Troubleshooting</string>
+    <string name="pref_useordered_t">Alternative signal sending mode</string>
+    <string name="pref_useordered_s">Using this option might solve problems when multiple media players are present</string>
+    <string name="pref_debuglog_t">Debug log</string>
+    <string name="pref_debuglog_s">Print debug information to the Xposed logs</string>
+    
+    <string name="pref_g_info">About</string>
+    <string name="pref_authors_t">Contributors and credits</string>
+    <string name="pref_authors_s">Tap to show</string>
+    <!-- Please put "[your language] translator: [your nickname]" in the blank line!
+Use '\n' for line breaks (line ends)! -->
+    <string name="pref_authors_d">Module creator: XspeedPL\n
+
+\n
+Special thanks\n
+Authors of Xposed Framework:\n
+rovo89 &amp; Tungstwenty</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/xeed.xposed.cbppmod"
+>
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+    />
+    <xeed.xposed.cbppmod.CustomListView
+        android:id="@+id/chainlist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:drag_start_mode="onMove"
+        app:remove_enabled="true"
+        app:remove_mode="flingRemove"
+        app:use_default_controller="true"
+        app:drag_handle_id="@id/drag_handle"
+        app:fling_handle_id="@id/drag_handle"
+    >
+    </xeed.xposed.cbppmod.CustomListView>
+</LinearLayout>

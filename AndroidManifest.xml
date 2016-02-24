@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="xeed.xposed.cbppmod"
+    android:installLocation="internalOnly"
+    android:versionCode="40"
+    android:versionName="4.0 alpha2" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="23"
+    />
+    
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:restoreAnyVersion="true"
+    >
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true"
+        />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="54"
+        />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Use the physical buttons to control music without turning on the screen!"
+        />
+        <activity
+            android:name=".PBMain"
+            android:description="@string/app_desc"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/title_pbmain"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.AppCompat"
+        >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PBSettings"
+            android:description="@string/app_desc"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/title_pbsettings"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.AppCompat"
+        >
+            <meta-data
+            	android:name="android.support.PARENT_ACTIVITY"
+            	android:value=".PBSettings"
+            />
+        </activity>
+        <activity-alias
+            android:targetActivity=".PBMain"
+            android:name=".Launcher"
+            android:label="@string/title_pbmain"
+            android:description="@string/app_desc"
+            android:icon="@drawable/ic_launcher"
+            android:enabled="true"
+        >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <service
+            android:name=".Coded$LightService"
+            tools:ignore="ExportedService"
+        >
+            <intent-filter>
+                <action android:name="xeed.xposed.cbppmod.TOGGLE_LIGHT" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
