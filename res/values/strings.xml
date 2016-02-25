@@ -96,8 +96,6 @@ Active version: %2$s</string>
         <item>Previous media</item>
         <item>Music volume up</item>
         <item>Music volume down</item>
-        <item>Fast forward</item>
-        <item>Rewind</item>
     </string-array>
     
     <string-array name="action_coded_k">

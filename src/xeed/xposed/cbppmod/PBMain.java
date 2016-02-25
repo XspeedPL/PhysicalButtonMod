@@ -137,8 +137,9 @@ public final class PBMain extends AppCompatActivity
 	@Override
 	public final void onStop()
 	{
-		unregisterReceiver(br);
-		super.onPause();
+		try { unregisterReceiver(br); }
+		catch (final Exception ex) { }
+		super.onStop();
 	}
 	
 	@Override
