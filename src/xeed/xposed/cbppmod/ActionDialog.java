@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -53,42 +54,40 @@ public final class ActionDialog
 		AppDialog.create(cef.getActivity(), l, i).show();
 	}
 	
-	private final void createEditDialog()
+	private final void createEditDialog(final int title, final View v, final EditFinishedListener l)
 	{
 		final AlertDialog.Builder b = new AlertDialog.Builder(cef.getContext());
-		b.setTitle(R.string.diag_edt_itn);
-		final EditText et = (EditText)View.inflate(cef.getContext(), R.layout.itneditor, null);
-		if (a.type == Action.ACTION_OTHER) et.setText(a.ex_s.substring(a.ex_s.indexOf(" <-> ") + 5));
-		b.setView(et);
 		b.setNegativeButton(R.string.diag_cancel, null);
 		b.setPositiveButton(R.string.diag_ok, null);
+		b.setTitle(title);
+		b.setView(v);
 		final AlertDialog ad = b.create();
 		ad.setOnShowListener(new DialogInterface.OnShowListener()
 		{
-		    @Override
-		    public final void onShow(final DialogInterface di)
-		    {
+			@Override
+			public final void onShow(final DialogInterface di)
+			{
+				l.setDialogInterface(di);
 		        final Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
-		        b.setOnClickListener(new View.OnClickListener()
-		        {
-		            @Override
-		            public void onClick(View view)
-		            {
-						try
-						{
-							final Intent i = Intent.parseUri(et.getText().toString(), 0);
-							change(Action.ACTION_OTHER, 3, "URI <-> " + i.toUri(0));
-							di.dismiss();
-						}
-		                catch (final Exception ex)
-						{
-		                	Toast.makeText(cef.getContext(), R.string.diag_itn_err, Toast.LENGTH_LONG).show();
-						}
-		            }
-		        });
-		    }
+		        b.setOnClickListener(l);
+			}
 		});
 		ad.show();
+	}
+	
+	private static abstract class EditFinishedListener implements View.OnClickListener
+	{
+		private DialogInterface di = null;
+		
+		@Override
+		public final void onClick(final View v)
+		{
+			onClick(di);
+		}
+		
+		public abstract void onClick(final DialogInterface di);
+		
+		public final void setDialogInterface(final DialogInterface diag) { di = diag; }
 	}
 	
 	private final void createDialog(final int type)
@@ -136,7 +135,18 @@ public final class ActionDialog
 				public final void onClick(final DialogInterface di, final int i)
 				{
 					di.dismiss();
-					change(Action.ACTION_KEY, (int)KeyListAdapter.inst.getItemId(i), null);
+					final CheckBox cb = new CheckBox(cef.getContext());
+					cb.setChecked(a.type == Action.ACTION_KEY && "long".equals(a.ex_s));
+					cb.setText(R.string.diag_prs_lng);
+					createEditDialog(R.string.diag_prs_opt, cb, new EditFinishedListener()
+					{
+						@Override
+						public final void onClick(final DialogInterface di)
+						{
+							change(Action.ACTION_KEY, (int)KeyListAdapter.inst.getItemId(i), cb.isChecked() ? "long" : "");
+							di.dismiss();
+						}
+					});
 				}
 			});
 		}
@@ -161,7 +171,28 @@ public final class ActionDialog
 				{
 					di.dismiss();
 					if (i < 3) createAppDialog(i);
-					else createEditDialog();
+					else
+					{
+						final EditText et = (EditText)View.inflate(cef.getContext(), R.layout.itneditor, null);
+						if (a.type == Action.ACTION_OTHER) et.setText(a.ex_s.substring(a.ex_s.indexOf(" <-> ") + 5));
+						createEditDialog(R.string.diag_edt_itn, et, new EditFinishedListener()
+				        {
+				            @Override
+				            public final void onClick(final DialogInterface di)
+				            {
+								try
+								{
+									final Intent i = Intent.parseUri(et.getText().toString(), 0);
+									change(Action.ACTION_OTHER, 3, "URI <-> " + i.toUri(0));
+									di.dismiss();
+								}
+				                catch (final Exception ex)
+								{
+				                	Toast.makeText(cef.getContext(), R.string.diag_itn_err, Toast.LENGTH_LONG).show();
+								}
+				            }
+				        });
+					}
 				}
 			});
 		}

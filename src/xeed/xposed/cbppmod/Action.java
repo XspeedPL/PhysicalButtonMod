@@ -30,13 +30,13 @@ final class Action
 	{
 		type = sp.getInt(pref + "type", -1);
 		if (type < 3) ex_i = sp.getInt(pref + "ex_i", -1);
-		if (type > 1) ex_s = sp.getString(pref + "ex_s", "  <->  ");
+		if (type > 0) ex_s = sp.getString(pref + "ex_s", "  <->  ");
 	}
 	
 	public final void save(final Editor e, final String pref)
 	{
 		e.putInt(pref + "type", type);
 		if (type < 3) e.putInt(pref + "ex_i", ex_i);
-		if (type > 1) e.putString(pref + "ex_s", ex_s);
+		if (type > 0) e.putString(pref + "ex_s", ex_s);
 	}
 }

@@ -19,6 +19,7 @@
     <string name="diag_sel_md">Choose screen modes</string>
     <string name="diag_edt_itn">Enter custom intent URI</string>
     <string name="diag_itn_err">Entered URI is invalid and couldn\'t be parsed</string>
+    <string name="diag_prs_opt">Keypress action options</string>
     
     <string name="diag_sts">Status</string>
     <string name="diag_md">Mode</string>
@@ -29,6 +30,7 @@
     <string name="diag_key">Keys</string>
     <string name="diag_vib">Vibration</string>
     <string name="diag_ccl">Cancels original key functions</string>
+    <string name="diag_prs_lng">Long keypress</string>
     
     <string name="diag_yes">Yes</string>
     <string name="diag_no">No</string>

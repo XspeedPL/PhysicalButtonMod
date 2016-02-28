@@ -17,6 +17,7 @@ final class Chain
 	{
 		nm = name;
 		if (sp != null) load(sp);
+		else act = new Action(Action.ACTION_NONE, -1);
 	}
 	
 	@Override

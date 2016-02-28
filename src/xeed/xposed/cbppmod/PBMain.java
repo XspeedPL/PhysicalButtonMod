@@ -28,19 +28,20 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public final class PBMain extends AppCompatActivity
 {
-	public static final SparseArray<String> keyDb = new SparseArray<String>();
-	public static final StyleSpan bold = new StyleSpan(android.graphics.Typeface.BOLD);
+	static final SparseArray<String> keyDb = new SparseArray<String>();
+	private static final StyleSpan bold = new StyleSpan(android.graphics.Typeface.BOLD);
 	
 	private static PBMain ma = null;
-	private static SharedPreferences sp = null;
-	private static BroadcastReceiver br = null;
-	private static int lk = -1;
-	private static AlertDialog d = null;
 	private static Resources r = null;
-	private static String[] au_v, md_v;
 	
-	private SettingsPagerAdapter spa = null;
+	private SharedPreferences sp = null;
+	private BroadcastReceiver br = null;
+	private String[] au_v, md_v;
+	private AlertDialog d = null;
+	private int lk = -1;
 	private Chain edit = null;
+	private SettingsPagerAdapter spa = new SettingsPagerAdapter(getSupportFragmentManager());
+	private ViewPager vp = null;
 	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
@@ -54,8 +55,9 @@ public final class PBMain extends AppCompatActivity
 		ma = this;
 		sp = getSharedPreferences("pbmcsettings", MODE_WORLD_READABLE);
 		setContentView(R.layout.main);
-		final ViewPager vp = (ViewPager)findViewById(R.id.pager);
-		vp.setAdapter(spa = new SettingsPagerAdapter(getSupportFragmentManager()));
+		vp = (ViewPager)findViewById(R.id.pager);
+		vp.setAdapter(spa);
+		if (b != null) vp.setCurrentItem(b.getInt("item", 0), false);
 		br = new BroadcastReceiver()
 		{
 			@Override
@@ -66,13 +68,32 @@ public final class PBMain extends AppCompatActivity
 					((EditText)d.findViewById(R.id.key)).setText(key(lk));
 			}
 		};
+		registerReceiver(br, new IntentFilter("xeed.xposed.cbppmod.Key"), null, null);
+	}
+	
+	@Override
+	protected final void onPause()
+	{
+		requestIntercept(false);
+	}
+	
+	@Override
+	protected final void onResume()
+	{
+		if (d != null) requestIntercept(true);
+	}
+	
+	@Override
+	protected final void onSaveInstanceState(final Bundle b)
+	{
+	    super.onSaveInstanceState(b);
+	    b.putInt("item", vp.getCurrentItem());
 	}
 
 	@Override
 	public final void onStart()
 	{
 		super.onStart();
-		registerReceiver(br, new IntentFilter("xeed.xposed.cbppmod.Key"), null, null);
 		final PackageInfo pi = getVerInfo();
 		if (pi.versionCode != getActiveVerCode())
 		{
@@ -125,7 +146,6 @@ public final class PBMain extends AppCompatActivity
 		}
 		else if (mi.getItemId() == R.id.save)
 		{
-			final ViewPager vp = (ViewPager)findViewById(R.id.pager);
 			if (spa.getCount() > 1) spa.cef.onFocusChange(spa.cef.getView().findViewById(R.id.ch_nm), false);
 			spa.clf.save();
 			if (vp.getCurrentItem() == 1) Toast.makeText(this, R.string.diag_sav, Toast.LENGTH_SHORT).show();
@@ -133,19 +153,10 @@ public final class PBMain extends AppCompatActivity
 		}
 		return super.onOptionsItemSelected(mi);
 	}
-
-	@Override
-	public final void onStop()
-	{
-		try { unregisterReceiver(br); }
-		catch (final Exception ex) { }
-		super.onStop();
-	}
 	
 	@Override
 	public final void onBackPressed()
 	{
-		final ViewPager vp = (ViewPager)findViewById(R.id.pager);
 		if (vp.getCurrentItem() == 1) vp.setCurrentItem(0);
 		else super.onBackPressed();
 	}
@@ -203,7 +214,7 @@ public final class PBMain extends AppCompatActivity
         return ret == null ? arr[0] : ret;
     }
     
-    private static final String mode(final int md)
+    private final String mode(final int md)
     {
     	String ret = "";
     	if ((md & 7) == 7) ret = "+++" + r.getString(R.string.diag_alw);
@@ -217,7 +228,7 @@ public final class PBMain extends AppCompatActivity
     	return ret.substring(3);
     }
 	
-    private static final String audio(final int au)
+    private final String audio(final int au)
     {
     	String ret = "";
     	if ((au & 7) == 7) ret = "+++" + r.getString(R.string.diag_alw);
@@ -241,7 +252,7 @@ public final class PBMain extends AppCompatActivity
 
 	public static final int getActiveVerCode() { return 0; }
 
-	public final class SettingsPagerAdapter extends FragmentPagerAdapter
+	public final class SettingsPagerAdapter extends FragmentStatePagerAdapter
 	{
 		final ChainListFragment clf;
 		final ChainEditFragment cef;
@@ -250,9 +261,11 @@ public final class PBMain extends AppCompatActivity
 		{
 			super(fm);
 			clf = new ChainListFragment();
+			clf.setRetainInstance(true);
 			cef = new ChainEditFragment();
+			cef.setRetainInstance(true);
 		}
-
+		
 		@Override
 		public final Fragment getItem(final int i)
 		{
@@ -271,7 +284,7 @@ public final class PBMain extends AppCompatActivity
 			return i == 0 ? r.getString(R.string.tab_chns) : r.getString(R.string.tab_edit) + " " + edit.nm;
 		}
 	}
-
+	
 	public final class ChainListFragment extends Fragment implements DragSortListener, OnItemClickListener
 	{
 		private final ArrayList<Chain> chs = new ArrayList<Chain>();
@@ -435,7 +448,6 @@ public final class PBMain extends AppCompatActivity
 		{
 			edit = chs.get(pos);
 			spa.notifyDataSetChanged();
-			final ViewPager vp = (ViewPager)findViewById(R.id.pager);
 			vp.setCurrentItem(1);
 			spa.cef.updateEdited();
 		}
@@ -479,7 +491,7 @@ public final class PBMain extends AppCompatActivity
 	public final class ChainEditFragment extends Fragment implements OnFocusChangeListener, OnCheckedChangeListener, OnClickListener, OnSeekBarChangeListener
 	{
 		private Chain ch = null;
-
+		
 		public final View onCreateView(final LayoutInflater li, final ViewGroup vg, final Bundle b)
 		{
 			ch = edit;
@@ -640,6 +652,7 @@ public final class PBMain extends AppCompatActivity
 				@Override
 				public final void onShow(final DialogInterface di)
 				{
+					d.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 					((EditText)d.findViewById(R.id.key)).setText(key(lk = k.code));
 					((CheckBox)d.findViewById(R.id.key_dn)).setChecked(k.dn);
 					((SeekBar)d.findViewById(R.id.key_dl)).setProgress(k.dl == -1 ? 0 : k.dl / 100);
@@ -663,13 +676,6 @@ public final class PBMain extends AppCompatActivity
 				}
 			});
 			d.show();
-		}
-		
-		private final void requestIntercept(final boolean state)
-		{
-            final Intent i = new Intent("xeed.xposed.cbppmod.Update");
-            i.putExtra("xeed.xposed.cbppmod.Send", state);
-            sendBroadcast(i);
 		}
 		
 		public final void updateEdited()
@@ -720,6 +726,13 @@ public final class PBMain extends AppCompatActivity
 		public final void onStopTrackingTouch(final SeekBar sb) { }
 	}
 
+	private final void requestIntercept(final boolean state)
+	{
+        final Intent i = new Intent("xeed.xposed.cbppmod.Update");
+        i.putExtra("xeed.xposed.cbppmod.Send", state);
+        sendBroadcast(i);
+	}
+	
 	static
 	{
 		for (final java.lang.reflect.Field f : KeyEvent.class.getDeclaredFields())
