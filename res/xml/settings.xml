@@ -50,11 +50,6 @@
         android:title="@string/pref_g_fixes"
     >
     	<CheckBoxPreference
-	        android:key="useOrdered"
-	        android:title="@string/pref_useordered_t"
-	        android:summary="@string/pref_useordered_s"
-	    />
-    	<CheckBoxPreference
 	        android:key="debugLog"
 	        android:title="@string/pref_debuglog_t"
 	        android:summary="@string/pref_debuglog_s"
@@ -69,5 +64,13 @@
     	    android:summary="@string/pref_authors_s"
     	    android:dialogMessage="@string/pref_authors_d"
     	/>
+    	<Preference
+            android:title="@string/pref_donate_t"
+            android:summary="@string/pref_donate_s">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=xspeedpl%40windowslive.com&amp;no_shipping=1&amp;item_name=PBMC%20Development%20Support"
+            />
+        </Preference>
   	</PreferenceCategory>
 </PreferenceScreen>

@@ -8,9 +8,10 @@ import android.content.SharedPreferences.Editor;
 final class Chain
 {
 	final LinkedList<Key> ks = new LinkedList<Key>();
-	int vib, rep, au, md;
+	int vib = 200, rep = 0, au = 7, md = 1;
+	private int ez = -1;
 	Action act;
-	boolean ccl;
+	boolean ccl = true, en = true;
     String nm;
 	
 	Chain(final SharedPreferences sp, final String name)
@@ -32,19 +33,21 @@ final class Chain
         act = new Action(sp, pref + "act.");
         try
         {
-            vib = sp.getInt(pref + "vib", 20);
+        	en = sp.getBoolean(pref + "en", true);
+        	ez = sp.getInt(pref + "ez", -1);
+            vib = sp.getInt(pref + "vib", 200);
             rep = sp.getInt(pref + "rep", 0);
             au = sp.getInt(pref + "au", 7);
             md = sp.getInt(pref + "md", 1);
             ccl = sp.getBoolean(pref + "ccl", true);
         }
-        catch (final Exception ex) { vib = 20; rep = 0; au = 7; md = 1; ccl = true; }
+        catch (final Exception ex) { }
         int kct = sp.getInt(pref + "kct", 0);
         for (int i = 0; i < kct; ++i)
         {
         	int c = sp.getInt(pref + "k" + i + ".c", 0);
         	boolean dn = sp.getBoolean(pref + "k" + i + ".dn", false);
-        	int dl = sp.getInt(pref + "k" + i + ".dl", -1);
+        	int dl = sp.getInt(pref + "k" + i + ".dl", 0);
         	ks.add(new Key(c, dn, dl));
         }
     }
@@ -53,6 +56,8 @@ final class Chain
     {
     	final String pref = "chains." + nm + ".";
         act.save(e, pref + "act.");
+        e.putBoolean(pref + "en", en);
+        e.putInt(pref + "ez", ez);
         e.putInt(pref + "vib", vib);
         e.putInt(pref + "rep", rep);
         e.putInt(pref + "au", au);
@@ -66,5 +71,23 @@ final class Chain
             e.putBoolean(pref + "k" + i + ".dn", k.dn);
             e.putInt(pref + "k" + i + ".dl", k.dl);
         }
+    }
+    
+    final boolean isEz() { return ez != -1; }
+    
+    final int getEz() { return ez; }
+    
+    final void setEz(final int t, final int key, final int dl)
+    {
+    	ks.clear();
+    	if (t != -1)
+    		for (int i = t % 3; i >= 0; --i)
+    		{
+    			ks.add(new Key(key, true, 0));
+    			ks.add(new Key(key, false, 0));
+    		}
+    	if (t > 2) ks.removeLast();
+    	ks.getLast().dl = dl;
+    	ez = t;
     }
 }

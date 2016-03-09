@@ -43,10 +43,9 @@ public final class CustomListView extends DragSortListView implements OnGestureL
 	@Override
 	public final boolean onSingleTapUp(final MotionEvent e)
 	{
-		final int touchPos = pointToPosition((int)e.getX(), (int)e.getY());
-		if (touchPos != INVALID_POSITION && touchPos >= getHeaderViewsCount() && touchPos < (getCount() - getFooterViewsCount()))
+		final int pos = pointToPosition((int)e.getX(), (int)e.getY());
+		if (pos != INVALID_POSITION && pos >= getHeaderViewsCount() && pos < (getCount() - getFooterViewsCount()))
 		{
-			final int pos = touchPos;
 			performItemClick(getChildAt(pos), pos, getItemIdAtPosition(pos));
 			return true;
 		}

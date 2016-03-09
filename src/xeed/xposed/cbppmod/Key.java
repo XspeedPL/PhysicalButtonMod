@@ -8,7 +8,7 @@ final class Key
     
     Key(final int kcode, final boolean down, final int delay)
     {
-        code = kcode;
-        dn = down; dl = delay;
+        code = kcode; dn = down;
+        dl = delay < 0 ? 0 : delay;
     }
 }

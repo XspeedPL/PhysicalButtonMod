@@ -20,6 +20,9 @@
     <string name="diag_edt_itn">Enter custom intent URI</string>
     <string name="diag_itn_err">Entered URI is invalid and couldn\'t be parsed</string>
     <string name="diag_prs_opt">Keypress action options</string>
+    <string name="diag_nm_err">One of the chains doesn\'t have a name and wasn\'t saved</string>
+    <string name="diag_nm_exs">Another chain with the same name exists, changes reverted</string>
+    <string name="diag_no_chs">It seems you don\'t have any key chains set yet. Would you like to add some basic ones?</string>
     
     <string name="diag_sts">Status</string>
     <string name="diag_md">Mode</string>
@@ -28,10 +31,10 @@
     <string name="diag_dl">Delay</string>
     <string name="diag_nm">Name</string>
     <string name="diag_key">Keys</string>
+    <string name="diag_rep">Repeats</string>
     <string name="diag_vib">Vibration</string>
     <string name="diag_ccl">Cancels original key functions</string>
     <string name="diag_prs_lng">Long keypress</string>
-    
     <string name="diag_yes">Yes</string>
     <string name="diag_no">No</string>
     <string name="diag_ok">OK</string>
@@ -41,13 +44,17 @@
     <string name="diag_alw">Always</string>
     <string name="diag_nev">Never</string>
     <string name="diag_rmv">Delete</string>
-	
-    <string name="act_single">Single press</string>
-    <string name="act_double">Double press</string>
-    <string name="act_triple">Triple press</string>
-    <string name="act_hold">Hold</string>
-    <string name="act_xhold">and hold</string>
-    <string name="act_delay">Delay/hold time:</string>
+    
+    <string-array name="ez_types">
+        <item>Single press</item>
+        <item>Double press</item>
+        <item>Triple press</item>
+        <item>Hold</item>
+        <item>Single press and hold</item>
+        <item>Double press and hold</item>
+    </string-array>
+    
+    <string name="ez_delay">Delay/hold time:</string>
     
     <string-array name="au_items">
         <item>Internal speaker</item>
@@ -75,6 +82,8 @@ Active version: %2$s</string>
     
     <string name="btn_setts">Settings</string>
     <string name="btn_newch">Add chain</string>
+    <string name="btn_basch">Basic chain</string>
+    <string name="btn_advch">Advanced chain</string>
     <string name="btn_savech">Save chains</string>
     
     <string-array name="action_k">
@@ -98,6 +107,8 @@ Active version: %2$s</string>
         <item>Previous media</item>
         <item>Music volume up</item>
         <item>Music volume down</item>
+        <item>Fast forward media</item>
+        <item>Rewind media</item>
     </string-array>
     
     <string-array name="action_coded_k">
@@ -129,16 +140,17 @@ Active version: %2$s</string>
     <string name="pref_startvol_t">Starting volume</string>
 
     <string name="pref_g_general">General options</string>
+    
     <string name="pref_hideapp_t">Hide app icon</string>
     <string name="pref_hideapp_s">Hide the \"%1$s\" icon from the app drawer</string>
     
     <string name="pref_g_fixes">Troubleshooting</string>
-    <string name="pref_useordered_t">Alternative signal sending mode</string>
-    <string name="pref_useordered_s">Using this option might solve problems when multiple media players are present</string>
+    
     <string name="pref_debuglog_t">Debug log</string>
     <string name="pref_debuglog_s">Print debug information to the Xposed logs</string>
     
     <string name="pref_g_info">About</string>
+    
     <string name="pref_authors_t">Contributors and credits</string>
     <string name="pref_authors_s">Tap to show</string>
     <!-- Please put "[your language] translator: [your nickname]" in the blank line!
@@ -149,4 +161,7 @@ Use '\n' for line breaks (line ends)! -->
 Special thanks\n
 Authors of Xposed Framework:\n
 rovo89 &amp; Tungstwenty</string>
+
+    <string name="pref_donate_t">Support development by donating</string>
+    <string name="pref_donate_s">Coders are coffee-operated machines, buy me a coffee :D</string>
 </resources>

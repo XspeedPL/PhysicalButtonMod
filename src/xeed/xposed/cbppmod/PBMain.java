@@ -1,6 +1,7 @@
 package xeed.xposed.cbppmod;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import com.mobeta.android.dslv.DragSortListView;
@@ -31,7 +32,6 @@ public final class PBMain extends AppCompatActivity
 	static final SparseArray<String> keyDb = new SparseArray<String>();
 	private static final StyleSpan bold = new StyleSpan(android.graphics.Typeface.BOLD);
 	
-	private static PBMain ma = null;
 	private static Resources r = null;
 	
 	private SharedPreferences sp = null;
@@ -52,7 +52,6 @@ public final class PBMain extends AppCompatActivity
 		r = getResources();
 		au_v = r.getStringArray(R.array.au_items);
 		md_v = r.getStringArray(R.array.md_items);
-		ma = this;
 		sp = getSharedPreferences("pbmcsettings", MODE_WORLD_READABLE);
 		setContentView(R.layout.main);
 		vp = (ViewPager)findViewById(R.id.pager);
@@ -75,11 +74,13 @@ public final class PBMain extends AppCompatActivity
 	protected final void onPause()
 	{
 		requestIntercept(false);
+		super.onPause();
 	}
 	
 	@Override
 	protected final void onResume()
 	{
+		super.onResume();
 		if (d != null) requestIntercept(true);
 	}
 	
@@ -97,7 +98,7 @@ public final class PBMain extends AppCompatActivity
 		final PackageInfo pi = getVerInfo();
 		if (pi.versionCode != getActiveVerCode())
 		{
-			final AlertDialog.Builder b = new AlertDialog.Builder(ma);
+			final AlertDialog.Builder b = new AlertDialog.Builder(this);
 			if (getActiveVerCode() == 0) b.setMessage(R.string.diag_reboot);
 			else b.setMessage(r.getString(R.string.diag_update, pi.versionName + " (" + pi.versionCode + ')', getActiveVerName() + " (" + getActiveVerCode() + ')'));
 			b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
@@ -134,12 +135,21 @@ public final class PBMain extends AppCompatActivity
 	{
 		if (mi.getItemId() == R.id.setts)
 		{
-			startActivity(new Intent(ma, PBSettings.class));
+			startActivity(new Intent(this, PBSettings.class));
 			return true;
 		}
-		else if (mi.getItemId() == R.id.newch)
+		else if (mi.getItemId() == R.id.basch || mi.getItemId() == R.id.advch)
 		{
-			spa.clf.chs.add(new Chain(sp, ""));
+			final ListIterator<Chain> li = spa.clf.chs.listIterator();
+			while (li.hasNext())
+				if (li.next().nm.equals(""))
+				{
+					li.remove();
+					break;
+				}
+			final Chain ch = new Chain(sp, "");
+			if (mi.getItemId() == R.id.basch) ch.setEz(0, KeyEvent.KEYCODE_UNKNOWN, 0);
+			spa.clf.chs.add(ch);
 			spa.clf.changed(false);
 			spa.clf.onItemClick(null, null, spa.clf.chs.size() - 1, 0);
 			return true;
@@ -163,8 +173,7 @@ public final class PBMain extends AppCompatActivity
 
 	static final String key(final int code)
 	{
-		if (code == -1)
-			return r.getString(R.string.diag_no_key);
+		if (code == -1) return r.getString(R.string.diag_no_key);
 		return keyDb.get(code, String.valueOf(code));
 	}
 
@@ -195,7 +204,7 @@ public final class PBMain extends AppCompatActivity
     	}
     	else if (a.type == Action.ACTION_KEY)
     	{
-    		ret = arr[2] + " (" + key(a.ex_i) + ')';
+    		ret = (a.isKeyLong() ? r.getString(R.string.diag_prs_lng) : arr[2]) + " (" + key(a.ex_i) + ')';
     	}
     	else if (a.type == Action.ACTION_MEDIA)
     	{
@@ -209,7 +218,7 @@ public final class PBMain extends AppCompatActivity
     	}
     	else if (a.type == Action.ACTION_OTHER)
     	{
-			ret = arr[4] + " (" + a.ex_s.substring(0, a.ex_s.indexOf(" <-> ")) + ')';
+			ret = arr[4] + " (" + a.getOtherName() + ')';
     	}
         return ret == null ? arr[0] : ret;
     }
@@ -242,9 +251,9 @@ public final class PBMain extends AppCompatActivity
     	return ret.substring(3);
     }
     
-	private static final PackageInfo getVerInfo()
+	private final PackageInfo getVerInfo()
 	{
-		try { return ma.getPackageManager().getPackageInfo(ma.getPackageName(), 0); }
+		try { return getPackageManager().getPackageInfo(getPackageName(), 0); }
 		catch (final Exception ex) { return null; }
 	}
 
@@ -302,8 +311,8 @@ public final class PBMain extends AppCompatActivity
 	        }
 	        if (chs.size() == 0 && getActiveVerCode() != 0)
 	        {
-	        	final AlertDialog.Builder bu = new AlertDialog.Builder(ma);
-				bu.setMessage("It seems you don't have any key chains set yet. Would you like to add some basic ones?");
+	        	final AlertDialog.Builder bu = new AlertDialog.Builder(PBMain.this);
+				bu.setMessage(R.string.diag_no_chs);
 				bu.setNegativeButton(R.string.diag_no, null);
 				bu.setPositiveButton(R.string.diag_yes, new DialogInterface.OnClickListener()
 				{
@@ -313,43 +322,34 @@ public final class PBMain extends AppCompatActivity
 			        	Chain ch = new Chain(sp, "Original camera");
 			        	ch.act = new Action(Action.ACTION_KEY, KeyEvent.KEYCODE_CAMERA);
 			        	ch.vib = 0;
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_CAMERA, true, 3000));
+			        	ch.setEz(3, KeyEvent.KEYCODE_CAMERA, 3000);
 			        	chs.add(ch);
 			        	
 			        	ch = new Chain(sp, "Play pause");
 			        	ch.act = new Action(Action.ACTION_MEDIA, Action.MEDIA_PLAY);
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_CAMERA, true, -1));
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_CAMERA, false, -1));
+			        	ch.setEz(0, KeyEvent.KEYCODE_CAMERA, 0);
 			        	chs.add(ch);
 			        	
 			        	ch = new Chain(sp, "Next track");
 			        	ch.act = new Action(Action.ACTION_MEDIA, Action.MEDIA_NEXT);
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_UP, true, 500));
+			        	ch.setEz(3, KeyEvent.KEYCODE_VOLUME_UP, 500);
 			        	chs.add(ch);
 			        	
 			        	ch = new Chain(sp, "Original vol-up");
 			        	ch.act = new Action(Action.ACTION_KEY, KeyEvent.KEYCODE_VOLUME_UP);
 			        	ch.vib = 0;
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_UP, true, -1));
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_UP, false, -1));
+			        	ch.setEz(0, KeyEvent.KEYCODE_VOLUME_UP, 0);
 			        	chs.add(ch);
 			        	
 			        	ch = new Chain(sp, "Previous track");
 			        	ch.act = new Action(Action.ACTION_MEDIA, Action.MEDIA_PREV);
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_DOWN, true, 500));
+			        	ch.setEz(3, KeyEvent.KEYCODE_VOLUME_DOWN, 500);
 			        	chs.add(ch);
 			        	
 			        	ch = new Chain(sp, "Original vol-dn");
 			        	ch.act = new Action(Action.ACTION_KEY, KeyEvent.KEYCODE_VOLUME_DOWN);
 			        	ch.vib = 0;
-			        	ch.ks.clear();
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_DOWN, true, -1));
-			        	ch.ks.add(new Key(KeyEvent.KEYCODE_VOLUME_DOWN, false, -1));
+			        	ch.setEz(0, KeyEvent.KEYCODE_VOLUME_DOWN, 0);
 			        	chs.add(ch);
 			        	
 			        	spa.clf.changed(false);
@@ -390,6 +390,7 @@ public final class PBMain extends AppCompatActivity
 				final Chain ch = chs.get(i);
 				e.putString("chainlist." + i, ch.nm);
 				if (ch.nm.length() > 0) ch.save(e);
+				else Toast.makeText(getContext(), R.string.diag_nm_err, Toast.LENGTH_LONG).show();
 			}
 			e.commit();
 			final Intent i = new Intent("xeed.xposed.cbppmod.Update");
@@ -421,21 +422,36 @@ public final class PBMain extends AppCompatActivity
 			@Override
 			public final View getView(final int pos, final View reuse, final ViewGroup vg)
 			{
-				final LayoutInflater li = LayoutInflater.from(ma);
+				final LayoutInflater li = LayoutInflater.from(PBMain.this);
 				final Chain ch = chs.get(pos);
 				final LinearLayout ll;
 				if (reuse != null) ll = (LinearLayout)reuse;
 				else ll = (LinearLayout)li.inflate(R.layout.chainitem, vg, false);
 				final ViewGroup keys = (ViewGroup)ll.findViewById(R.id.keys);
 				keys.removeAllViews();
-				for (final Key k : ch.ks)
+				if (ch.isEz())
 				{
-					final Button b = (Button)li.inflate(R.layout.chainkey, keys, false);
-					final String key = key(k.code);
-					final SpannableString ss = new SpannableString(key + "\n" + r.getString(k.dn ? R.string.key_pressed : R.string.key_released) + "\n" + (k.dl == -1 ? "" : r.getString(R.string.diag_dl) + ": " + (k.dl/1000F) + "s"));
-					ss.setSpan(bold, 0, key.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-					b.setText(ss);
-					keys.addView(b);
+					final Key k = ch.ks.getLast();
+					final String[] ezt = r.getStringArray(R.array.ez_types);
+					final Button bt = (Button)li.inflate(R.layout.chainkey, keys, false);
+					final String title = ezt[ch.getEz()] + " (" + key(k.code) + ")";
+					final SpannableString ss = new SpannableString(title + "\n" + r.getString(R.string.ez_delay) + " " + (k.dl / 1000F) + "s");
+					ss.setSpan(bold, 0, title.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+					bt.setText(ss);
+					bt.setLines(2);
+					keys.addView(bt);
+				}
+				else
+				{
+					for (final Key k : ch.ks)
+					{
+						final Button b = (Button)li.inflate(R.layout.chainkey, keys, false);
+						final String key = key(k.code);
+						final SpannableString ss = new SpannableString(key + "\n" + r.getString(k.dn ? R.string.key_pressed : R.string.key_released) + "\n" + (k.dl < 1 ? "" : r.getString(R.string.diag_dl) + ": " + (k.dl/1000F) + "s"));
+						ss.setSpan(bold, 0, key.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+						b.setText(ss);
+						keys.addView(b);
+					}
 				}
 				((TextView)ll.findViewById(R.id.name)).setText(ch.nm);
 				((TextView)ll.findViewById(R.id.desc)).setText(r.getString(R.string.diag_md) + ": " + mode(ch.md) + ", " + r.getString(R.string.diag_au) + ": " + audio(ch.au));
@@ -511,9 +527,14 @@ public final class PBMain extends AppCompatActivity
 			bt.setOnClickListener(this);
 			final CheckBox cb = (CheckBox)ret.findViewById(R.id.ch_ccl);
 			cb.setChecked(ch.ccl);
-			cb.setOnCheckedChangeListener(this);
-			final SeekBar sb = (SeekBar)ret.findViewById(R.id.ch_vib);
-			sb.setProgress(ch.vib / 50);
+			if (ch.isEz()) cb.setVisibility(View.GONE);
+			else cb.setOnCheckedChangeListener(this);
+			SeekBar sb = (SeekBar)ret.findViewById(R.id.ch_rep);
+			sb.setProgress(ch.rep);
+			sb.setOnSeekBarChangeListener(this);
+			sb.setTag(Boolean.TRUE);
+			sb = (SeekBar)ret.findViewById(R.id.ch_vib);
+			sb.setProgress(ch.vib / 10);
 			sb.setOnSeekBarChangeListener(this);
 			return ret;
 		}
@@ -522,23 +543,40 @@ public final class PBMain extends AppCompatActivity
 		{
 			final ViewGroup keys = (ViewGroup)vg.findViewById(R.id.keys);
 			keys.removeAllViews();
-			for (final Key k : ch.ks)
+			if (ch.isEz())
 			{
+				final Key k = ch.ks.getLast();
+				final String[] ezt = r.getStringArray(R.array.ez_types);
 				final Button bt = (Button)li.inflate(R.layout.chainkey, keys, false);
-				final String key = key(k.code);
-				final SpannableString ss = new SpannableString(key + "\n" + r.getString(k.dn ? R.string.key_pressed : R.string.key_released) + "\n" + (k.dl == -1 ? "" : r.getString(R.string.diag_dl) + ": " + (k.dl/1000F) + "s"));
-				ss.setSpan(bold, 0, key.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+				bt.setId(R.id.ch_ez);
+				final String title = ezt[ch.getEz()] + " (" + key(k.code) + ")";
+				final SpannableString ss = new SpannableString(title + "\n" + r.getString(R.string.ez_delay) + " " + (k.dl / 1000F) + "s");
+				ss.setSpan(bold, 0, title.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 				bt.setText(ss);
-				bt.setTag(k);
+				bt.setLines(2);
 				bt.setOnClickListener(this);
 				keys.addView(bt);
 			}
-			final Button bt = (Button)li.inflate(R.layout.chainkey, keys, false);
-			bt.setId(R.id.add_key);
-			bt.getBackground().setAlpha(127);
-			bt.setText("\n" + r.getString(R.string.diag_add_key) + "\n");
-			bt.setOnClickListener(this);
-			keys.addView(bt);
+			else
+			{
+				for (final Key k : ch.ks)
+				{
+					final Button bt = (Button)li.inflate(R.layout.chainkey, keys, false);
+					final String key = key(k.code);
+					final SpannableString ss = new SpannableString(key + "\n" + r.getString(k.dn ? R.string.key_pressed : R.string.key_released) + "\n" + (k.dl < 1 ? "" : r.getString(R.string.diag_dl) + ": " + (k.dl/1000F) + "s"));
+					ss.setSpan(bold, 0, key.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+					bt.setText(ss);
+					bt.setTag(k);
+					bt.setOnClickListener(this);
+					keys.addView(bt);
+				}
+				final Button bt = (Button)li.inflate(R.layout.chainkey, keys, false);
+				bt.setId(R.id.add_key);
+				bt.getBackground().setAlpha(127);
+				bt.setText("\n" + r.getString(R.string.diag_add_key) + "\n");
+				bt.setOnClickListener(this);
+				keys.addView(bt);
+			}
 		}
 		
 		final void actionChanged()
@@ -559,7 +597,7 @@ public final class PBMain extends AppCompatActivity
 					final Intent main = i.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
 					ch.act.type = Action.ACTION_OTHER;
 					ch.act.ex_i = 1;
-					ch.act.ex_s = name + " <-> " + main.toUri(0);
+					ch.act.ex_s = name + Action.OTHER_SPLT + main.toUri(0);
 					actionChanged();
 				}
 			}
@@ -570,12 +608,10 @@ public final class PBMain extends AppCompatActivity
 		{
 			final boolean md = v.getId() == R.id.ch_md;
 			if (v.getId() == R.id.ch_act)
-			{
 				new ActionDialog(this, edit.act).show();
-			}
 			else if (md || v.getId() == R.id.ch_au)
 			{
-				final AlertDialog.Builder b = new AlertDialog.Builder(ma);
+				final AlertDialog.Builder b = new AlertDialog.Builder(PBMain.this);
 				b.setTitle(md ? R.string.diag_sel_md : R.string.diag_sel_au);
 				final boolean[] arr = new boolean[3];
 				for (int x = md ? ch.md : ch.au, i = 0; i < 3; ++i, x >>= 1)
@@ -612,37 +648,60 @@ public final class PBMain extends AppCompatActivity
 				});
 				b.create().show();
 			}
-			else if (v.getId() == R.id.add_key) keyDialog(new Key(0, false, -1), true);
-			else if (v.getTag() != null) keyDialog((Key)v.getTag(), false);
+			else if (v.getId() == R.id.add_key) keyDialog(new Key(0, false, 0), 1);
+			else if (v.getId() == R.id.ch_ez)
+			{
+				// TODO: Setup ez chain
+				final AlertDialog.Builder b = new AlertDialog.Builder(PBMain.this);
+				b.setSingleChoiceItems(R.array.ez_types, ch.getEz(), new DialogInterface.OnClickListener()
+				{
+					@Override
+					public final void onClick(final DialogInterface di, final int i)
+					{
+						keyDialog(ch.ks.getLast(), i + 2);
+						di.dismiss();
+					}
+				});
+				b.setNegativeButton(R.string.diag_cancel, null);
+				b.create().show();
+			}
+			else if (v.getTag() != null) keyDialog((Key)v.getTag(), 0);
+			if (v.getId() != R.id.ch_nm) onFocusChange(findViewById(R.id.ch_nm), false);
 		}
 		
-		private final void keyDialog(final Key k, final boolean isnew)
+		private final void keyDialog(final Key k, final int type)
 		{
-			final AlertDialog.Builder b = new AlertDialog.Builder(ma);
+			final AlertDialog.Builder b = new AlertDialog.Builder(PBMain.this);
 			b.setView(R.layout.keyeditor);
 			b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
 			{
 				@Override
 				public final void onClick(final DialogInterface di, final int i)
 				{
-					k.code = lk;
-					k.dn = ((CheckBox)d.findViewById(R.id.key_dn)).isChecked();
-					k.dl = ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 100;
-					if (k.dl == 0) k.dl = -1;
-					if (isnew) ch.ks.add(k);
-					addKeys(LayoutInflater.from(ma), (ViewGroup)getView());
+					if (type > 1)
+					{
+						ch.setEz(type - 2, lk, ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 100);
+					}
+					else
+					{
+						k.code = lk;
+						k.dn = ((CheckBox)d.findViewById(R.id.key_dn)).isChecked();
+						k.dl = ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 100;
+						if (type == 1) ch.ks.add(k);
+					}
+					addKeys(LayoutInflater.from(PBMain.this), (ViewGroup)getView());
 					spa.clf.changed(false);
 				}
 			});
 			b.setNegativeButton(R.string.diag_cancel, null);
-			if (!isnew)
+			if (type == 0)
 				b.setNeutralButton(R.string.diag_rmv, new DialogInterface.OnClickListener()
 				{
 					@Override
 					public final void onClick(final DialogInterface di, final int i)
 					{
 						edit.ks.remove(k);
-						addKeys(LayoutInflater.from(ma), (ViewGroup)getView());
+						addKeys(LayoutInflater.from(PBMain.this), (ViewGroup)getView());
 						spa.clf.changed(false);
 					}
 				});
@@ -654,8 +713,10 @@ public final class PBMain extends AppCompatActivity
 				{
 					d.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 					((EditText)d.findViewById(R.id.key)).setText(key(lk = k.code));
-					((CheckBox)d.findViewById(R.id.key_dn)).setChecked(k.dn);
-					((SeekBar)d.findViewById(R.id.key_dl)).setProgress(k.dl == -1 ? 0 : k.dl / 100);
+					final CheckBox cb = (CheckBox)d.findViewById(R.id.key_dn);
+					if (type > 1) cb.setVisibility(View.GONE);
+					else cb.setChecked(k.dn);
+					((SeekBar)d.findViewById(R.id.key_dl)).setProgress(k.dl / 100);
 					final ToggleButton tb = (ToggleButton)d.findViewById(R.id.tgl_itc);
 					tb.setOnCheckedChangeListener(new OnCheckedChangeListener()
 					{
@@ -672,6 +733,7 @@ public final class PBMain extends AppCompatActivity
 				@Override
 				public final void onDismiss(final DialogInterface di)
 				{
+					d = null;
 					requestIntercept(false);
 				}
 			});
@@ -684,13 +746,14 @@ public final class PBMain extends AppCompatActivity
 			final ViewGroup vg = (ViewGroup)getView();
 			if (vg == null) return;
 			((AutoCompleteTextView)vg.findViewById(R.id.ch_nm)).setText(ch.nm);
-			final LayoutInflater li = LayoutInflater.from(ma);
+			final LayoutInflater li = LayoutInflater.from(PBMain.this);
 			addKeys(li, vg);
 			((Button)vg.findViewById(R.id.ch_act)).setText(action(ch.act));
 			((Button)vg.findViewById(R.id.ch_md)).setText(mode(ch.md));
 			((Button)vg.findViewById(R.id.ch_au)).setText(audio(ch.au));
 			((CheckBox)vg.findViewById(R.id.ch_ccl)).setChecked(ch.ccl);
-			((SeekBar)vg.findViewById(R.id.ch_vib)).setProgress(ch.vib / 50);
+			((SeekBar)vg.findViewById(R.id.ch_rep)).setProgress(ch.rep);
+			((SeekBar)vg.findViewById(R.id.ch_vib)).setProgress(ch.vib / 10);
 		}
 
 		@Override
@@ -699,7 +762,15 @@ public final class PBMain extends AppCompatActivity
 			final TextView tv = (TextView)v;
 			if (!f && !ch.nm.equals(tv.getText().toString()))
 			{
-				ch.nm = tv.getText().toString();
+				final String nnm = tv.getText().toString();
+				for (final Chain ech : spa.clf.chs)
+					if (ech.nm.equals(nnm))
+					{
+						tv.setText(ch.nm);
+						Toast.makeText(getContext(), R.string.diag_nm_exs, Toast.LENGTH_LONG).show();
+						return;
+					}
+				ch.nm = nnm;
 				spa.notifyDataSetChanged();
 				spa.clf.changed(false);
 			}
@@ -715,7 +786,8 @@ public final class PBMain extends AppCompatActivity
 		@Override
 		public final void onProgressChanged(final SeekBar sb, final int v, final boolean u)
 		{
-			ch.vib = v * 50;
+			if (sb.getTag() == Boolean.TRUE) ch.rep = v;
+			else ch.vib = v * 10;
 			spa.clf.changed(false);
 		}
 

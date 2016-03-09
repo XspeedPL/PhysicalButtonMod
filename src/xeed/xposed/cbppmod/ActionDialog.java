@@ -46,7 +46,7 @@ public final class ActionDialog
 				else
 				{
 					i.setComponent(new ComponentName(ai.ri.activityInfo.packageName, ai.ri.activityInfo.name));
-					change(Action.ACTION_OTHER, 0, ai.name + " <-> " + i.toUri(0));
+					change(Action.ACTION_OTHER, 0, ai.name + Action.OTHER_SPLT + i.toUri(0));
 				}
 			}
 		};
@@ -136,7 +136,7 @@ public final class ActionDialog
 				{
 					di.dismiss();
 					final CheckBox cb = new CheckBox(cef.getContext());
-					cb.setChecked(a.type == Action.ACTION_KEY && "long".equals(a.ex_s));
+					cb.setChecked(a.type == Action.ACTION_KEY && a.isKeyLong());
 					cb.setText(R.string.diag_prs_lng);
 					createEditDialog(R.string.diag_prs_opt, cb, new EditFinishedListener()
 					{
@@ -174,7 +174,7 @@ public final class ActionDialog
 					else
 					{
 						final EditText et = (EditText)View.inflate(cef.getContext(), R.layout.itneditor, null);
-						if (a.type == Action.ACTION_OTHER) et.setText(a.ex_s.substring(a.ex_s.indexOf(" <-> ") + 5));
+						if (a.type == Action.ACTION_OTHER) et.setText(a.getOtherIntent());
 						createEditDialog(R.string.diag_edt_itn, et, new EditFinishedListener()
 				        {
 				            @Override
@@ -183,7 +183,7 @@ public final class ActionDialog
 								try
 								{
 									final Intent i = Intent.parseUri(et.getText().toString(), 0);
-									change(Action.ACTION_OTHER, 3, "URI <-> " + i.toUri(0));
+									change(Action.ACTION_OTHER, 3, "URI" + Action.OTHER_SPLT + i.toUri(0));
 									di.dismiss();
 								}
 				                catch (final Exception ex)

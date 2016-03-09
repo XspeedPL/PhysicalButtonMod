@@ -79,6 +79,53 @@
 	        />
 
 	    </LinearLayout>
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginEnd="5dp"
+	            android:layout_marginRight="5dp"
+	            android:text="@string/diag_rep"
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	        />
+	        <xeed.xposed.cbppmod.TextSeekBar
+	            android:id="@+id/ch_rep"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/diag_rep"
+	            android:max="10"
+	            app:textValueMult="1"
+	            app:textSuffix=""
+	        />
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginEnd="5dp"
+	            android:layout_marginRight="5dp"
+	            android:text="@string/diag_vib"
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	        />
+	        <xeed.xposed.cbppmod.TextSeekBar
+	            android:id="@+id/ch_vib"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/diag_vib"
+	            android:max="100"
+	            app:textValueMult="10"
+	            app:textSuffix="ms"
+	        />
+	    </LinearLayout>
+	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
@@ -117,29 +164,6 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:text="@string/diag_au" />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_marginEnd="5dp"
-	            android:layout_marginRight="5dp"
-	            android:text="@string/diag_vib"
-	            android:textAppearance="?android:attr/textAppearanceMedium"
-	        />
-	        <xeed.xposed.cbppmod.TextSeekBar
-	            android:id="@+id/ch_vib"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:text="@string/diag_vib"
-	            android:max="40"
-	            app:textValueMult="50"
-	            app:textSuffix="ms"
-	        />
 	    </LinearLayout>
 
 	    <CheckBox

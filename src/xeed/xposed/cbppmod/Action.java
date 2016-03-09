@@ -19,6 +19,8 @@ final class Action
 	
 	public static final int CODED_SRBT = 0, CODED_FLHT = 1;
 	
+	public static final String OTHER_SPLT = " <-> ";
+	
 	public int type;
 	public int ex_i;
 	public String ex_s;
@@ -30,7 +32,7 @@ final class Action
 	{
 		type = sp.getInt(pref + "type", -1);
 		if (type < 3) ex_i = sp.getInt(pref + "ex_i", -1);
-		if (type > 0) ex_s = sp.getString(pref + "ex_s", "  <->  ");
+		if (type > 0) ex_s = sp.getString(pref + "ex_s", " " + OTHER_SPLT + " ");
 	}
 	
 	public final void save(final Editor e, final String pref)
@@ -38,5 +40,20 @@ final class Action
 		e.putInt(pref + "type", type);
 		if (type < 3) e.putInt(pref + "ex_i", ex_i);
 		if (type > 0) e.putString(pref + "ex_s", ex_s);
+	}
+	
+	public final boolean isKeyLong()
+	{
+		return ex_s != null && ex_s.contains("long");
+	}
+	
+	public final String getOtherName()
+	{
+		return ex_s.substring(0, ex_s.indexOf(OTHER_SPLT));
+	}
+	
+	public final String getOtherIntent()
+	{
+		return ex_s.substring(ex_s.indexOf(OTHER_SPLT) + 5);
 	}
 }
