@@ -1,8 +1,8 @@
--keep public class xeed.xposed.cbppmod.PhysicalButtonMod*
+-keep public class xeed.xposed.cbppmod.PhysicalButtonMod
 
 -keepclassmembers public class xeed.xposed.cbppmod.PBMain
 {
-	public static String getActiveVerName();
+	public static java.lang.String getActiveVerName();
 	public static int getActiveVerCode();
 }
 
@@ -11,3 +11,5 @@
 -libraryjars ../Libraries/XposedBridgeApi.jar
 
 -libraryjars ../Libraries/android-4.4_r1.jar
+
+-libraryjars ../ZZHacks/bin

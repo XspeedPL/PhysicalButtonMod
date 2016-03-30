@@ -1,15 +1,22 @@
 package xeed.xposed.cbppmod;
 
+import java.util.List;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
+import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public final class Coded
@@ -109,4 +116,38 @@ public final class Coded
 		Runtime.getRuntime().exec(new String[] { "setprop", "ctl.restart", "surfaceflinger" }).waitFor();
 		Runtime.getRuntime().exec(new String[] { "setprop", "ctl.restart", "zygote" }).waitFor();
 	}
+	
+	@SuppressLint("InlinedApi")
+	@TargetApi(11)
+	public static final void switchToLastApp(final Context c, final ActivityManager am)
+	{
+		if (Build.VERSION.SDK_INT > 10)
+		{
+			int lastAppId = 0;
+			final Intent intent = new Intent(Intent.ACTION_MAIN);
+			String homePackage = "com.android.launcher";
+			intent.addCategory(Intent.CATEGORY_HOME);
+			final ResolveInfo res = c.getPackageManager().resolveActivity(intent, 0);
+			if (res.activityInfo != null && !res.activityInfo.packageName.equals("android"))
+			{
+				homePackage = res.activityInfo.packageName;
+			}
+			final List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(5);
+			for (int i = 1; i < tasks.size(); ++i)
+			{
+				final String pkg = tasks.get(i).topActivity.getPackageName();
+				if (!homePackage.equals(pkg) && !pkg.equals("com.android.systemui"))
+				{
+					lastAppId = tasks.get(i).id;
+					break;
+				}
+			}
+			if (lastAppId != 0)
+			{
+				am.moveTaskToFront(lastAppId, Build.VERSION.SDK_INT > 11 ? ActivityManager.MOVE_TASK_NO_USER_ACTION : 0);
+				return;
+			}
+		}
+		Toast.makeText(c, "Error", Toast.LENGTH_SHORT).show();
+    }
 }

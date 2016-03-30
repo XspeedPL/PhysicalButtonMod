@@ -1,4 +1,4 @@
-package xeed.xposed.cbppmod;
+package xeed.xposed.cbppmod.viw;
 
 import com.mobeta.android.dslv.DragSortListView;
 import android.annotation.SuppressLint;

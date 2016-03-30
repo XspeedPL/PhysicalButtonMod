@@ -12,7 +12,7 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall"
     />
-    <xeed.xposed.cbppmod.CustomListView
+    <xeed.xposed.cbppmod.viw.CustomListView
         android:id="@+id/chainlist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -23,6 +23,5 @@
         app:use_default_controller="true"
         app:drag_handle_id="@id/drag_handle"
         app:fling_handle_id="@id/drag_handle"
-    >
-    </xeed.xposed.cbppmod.CustomListView>
+    />
 </LinearLayout>

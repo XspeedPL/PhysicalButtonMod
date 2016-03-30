@@ -1,4 +1,4 @@
-package xeed.xposed.cbppmod;
+package xeed.xposed.cbppmod.viw;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,6 +8,7 @@ import android.graphics.Paint.Align;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import xeed.xposed.cbppmod.R;
 
 public final class TextSeekBar extends SeekBar
 {

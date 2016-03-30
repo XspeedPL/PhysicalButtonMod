@@ -62,16 +62,15 @@
             android:layout_margin="5dp"
         />
 
-        <xeed.xposed.cbppmod.TextSeekBar
+        <xeed.xposed.cbppmod.viw.TextSeekBar
             android:id="@+id/key_dl"
             android:layout_width="0dp"
-            android:layout_margin="5dp"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:max="50"
-            app:textValueMult="100"
+            android:max="100"
             app:textSuffix="ms"
-        />
+            app:textValueMult="50" />
 
     </LinearLayout>
 

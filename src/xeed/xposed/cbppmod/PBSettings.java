@@ -9,9 +9,11 @@ import android.content.SharedPreferences.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.preference.ListPreference;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
+import xeed.xposed.cbppmod.prf.FlagListPreference;
 
 @SuppressLint("NewApi")
 public final class PBSettings extends AppCompatActivity
@@ -69,8 +71,8 @@ public final class PBSettings extends AppCompatActivity
 	        lp.setEntryValues(v.toArray(new CharSequence[v.size()]));
 	        findPreference("setPlrMode").setEnabled(sp.getString("setPlayer", "system").indexOf('\t') > 0);
 	        if (sp.getInt("usePlugOnly", 0) == 0) sp.edit().putInt("usePlugOnly", 7).apply();
-	        InfoDialogPreference idp = (InfoDialogPreference)findPreference("authors");
-	        idp.setDialogMessage(idp.getDialogMessage() + "\n DragSortListView:\n bauerca");
+	        final DialogPreference idp = (DialogPreference)findPreference("authors");
+	        idp.setDialogMessage(idp.getDialogMessage() + "\n DragSortListView:\n bauerca\n FlowLayout:\n ApmeM");
 	    }
 	    
 	    @Override

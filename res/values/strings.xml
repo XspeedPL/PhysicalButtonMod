@@ -23,7 +23,10 @@
     <string name="diag_nm_err">One of the chains doesn\'t have a name and wasn\'t saved</string>
     <string name="diag_nm_exs">Another chain with the same name exists, changes reverted</string>
     <string name="diag_no_chs">It seems you don\'t have any key chains set yet. Would you like to add some basic ones?</string>
+    <string name="diag_and_req">Android version %1$s or newer is required</string>
+    <string name="diag_act_ex">Action of chain \'%1$s\' executed</string>
     
+    <string name="diag_itc">Intercept input</string>
     <string name="diag_sts">Status</string>
     <string name="diag_md">Mode</string>
     <string name="diag_au">Audio</string>
@@ -33,7 +36,7 @@
     <string name="diag_key">Keys</string>
     <string name="diag_rep">Repeats</string>
     <string name="diag_vib">Vibration</string>
-    <string name="diag_ccl">Cancels original key functions</string>
+    <string name="diag_ccl">Cancel original key functions</string>
     <string name="diag_prs_lng">Long keypress</string>
     <string name="diag_yes">Yes</string>
     <string name="diag_no">No</string>
@@ -44,14 +47,21 @@
     <string name="diag_alw">Always</string>
     <string name="diag_nev">Never</string>
     <string name="diag_rmv">Delete</string>
+    <string name="diag_tst">Show toast on action</string>
+    <string name="diag_adv_cnv">Convert to advanced chain</string>
+    
+    <string-array name="rep_items">
+        <item>Amount of times</item>
+        <item>Until key pressed/released</item>
+    </string-array>
     
     <string-array name="ez_types">
         <item>Single press</item>
         <item>Double press</item>
         <item>Triple press</item>
-        <item>Hold</item>
-        <item>Single press and hold</item>
-        <item>Double press and hold</item>
+        <item>Press &amp; hold</item>
+        <item>Press then press &amp; hold</item>
+        <item>Press twice then press &amp; hold</item>
     </string-array>
     
     <string name="ez_delay">Delay/hold time:</string>
@@ -75,6 +85,7 @@ Installed version: %1$s\n
 Active version: %2$s</string>
     
     <string name="tab_chns">Chain list</string>
+    <string name="tab_test">Key test</string>
     <string name="tab_edit">Edit:</string>
     
     <string name="key_pressed">Pressed</string>
@@ -114,6 +125,7 @@ Active version: %2$s</string>
     <string-array name="action_coded_k">
         <item>Soft reboot</item>
         <item>Toggle flashlight</item>
+        <item>Switch to previous app</item>
     </string-array>
 
     <string name="pref_useplugin_t">Plug &amp; Play</string>

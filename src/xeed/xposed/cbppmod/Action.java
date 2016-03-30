@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.view.KeyEvent;
 
-final class Action
+public final class Action
 {
 	public static final int ACTION_NONE = -1, ACTION_MEDIA = 0, ACTION_KEY = 1, ACTION_CODED = 2, ACTION_OTHER = 3;
 	
@@ -17,7 +17,7 @@ final class Action
 	public static final int MEDIA_REWD = KeyEvent.KEYCODE_MEDIA_REWIND;
 	public static final int[] MEDIA = new int[] { MEDIA_PLAY, MEDIA_NEXT, MEDIA_PREV, MEDIA_VOUP, MEDIA_VODN, MEDIA_FORV, MEDIA_REWD };
 	
-	public static final int CODED_SRBT = 0, CODED_FLHT = 1;
+	public static final int CODED_SRBT = 0, CODED_FLHT = 1, CODED_PAPP = 2;
 	
 	public static final String OTHER_SPLT = " <-> ";
 	

@@ -10,20 +10,20 @@
             android:title="@string/pref_hideapp_t"
             android:summary="@string/pref_hideapp_s"
         />
-	    <xeed.xposed.cbppmod.FlagListPreference
+	    <xeed.xposed.cbppmod.prf.FlagListPreference
 	        android:key="usePlugIn"
 	        android:title="@string/pref_useplugin_t"
 	        android:summary="@string/pref_useplugin_s"
 	        android:entries="@array/au_items"
 	        android:entryValues="@array/au_items"
 	    />
-	    <xeed.xposed.cbppmod.ValueListPreference
+	    <xeed.xposed.cbppmod.prf.ValueListPreference
 	        android:key="setPlayer"
 	        android:title="@string/pref_setplayer_t"
 	        android:summary="@string/pref_setplayer_s"
 	        android:defaultValue="system"
 	    />
-	    <xeed.xposed.cbppmod.IntListPreference
+	    <xeed.xposed.cbppmod.prf.IntListPreference
 	        android:key="setPlrMode"
 	        android:title="@string/pref_setplrmode_t"
 	        android:summary="@string/pref_setplrmode_s"
@@ -35,7 +35,7 @@
 	        android:title="@string/pref_usestartvol_t"
 	        android:summary="@string/pref_usestartvol_s"
 	    />
-    	<xeed.xposed.cbppmod.SeekBarPreference
+    	<xeed.xposed.cbppmod.prf.SeekBarPreference
             android:key="startVol"
             android:dialogMessage="@string/pref_startvol_d"
             android:text="%"
@@ -58,7 +58,7 @@
   	<PreferenceCategory
         android:title="@string/pref_g_info"
     >
-    	<xeed.xposed.cbppmod.InfoDialogPreference
+    	<xeed.xposed.cbppmod.prf.InfoDialogPreference
     	    android:key="authors"
     	    android:title="@string/pref_authors_t"
     	    android:summary="@string/pref_authors_s"

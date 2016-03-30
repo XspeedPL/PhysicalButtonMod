@@ -1,14 +1,17 @@
 package xeed.xposed.cbppmod;
 
-final class Key
+import android.os.SystemClock;
+
+public final class Key
 {
-    int code;
-    int dl;
-    boolean dn;
+    public long sw;
+    public int code, dl;
+    public boolean dn;
     
-    Key(final int kcode, final boolean down, final int delay)
+    public Key(final int kcode, final boolean down, final int delay)
     {
         code = kcode; dn = down;
         dl = delay < 0 ? 0 : delay;
+        sw = SystemClock.elapsedRealtime();
     }
 }

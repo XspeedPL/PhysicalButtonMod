@@ -1,4 +1,4 @@
-package xeed.xposed.cbppmod;
+package xeed.xposed.cbppmod.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,9 @@ import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.Toast;
-import xeed.xposed.cbppmod.PBMain.ChainEditFragment;
+import xeed.xposed.cbppmod.Action;
+import xeed.xposed.cbppmod.PBMain;
+import xeed.xposed.cbppmod.R;
 
 public final class ActionDialog
 {
@@ -41,7 +44,7 @@ public final class ActionDialog
 				if (type == 2)
 				{
 					i.setComponent(new ComponentName(ai.ri.activityInfo.packageName, ai.ri.activityInfo.name));
-					cef.startActivityForResult(i, 1028);
+					cef.getActivity().startActivityForResult(i, PBMain.REQ_SHCUT);
 				}
 				else
 				{
@@ -157,8 +160,12 @@ public final class ActionDialog
 				@Override
 				public final void onClick(final DialogInterface di, final int i)
 				{
-					di.dismiss();
-					change(Action.ACTION_CODED, i, null);
+					if (i == Action.CODED_PAPP && Build.VERSION.SDK_INT < 11) Toast.makeText(cef.getContext(), cef.getString(R.string.diag_and_req, "11 (Honeycomb)"), Toast.LENGTH_LONG).show();
+					else
+					{
+						di.dismiss();
+						change(Action.ACTION_CODED, i, null);
+					}
 				}
 			});
 		}

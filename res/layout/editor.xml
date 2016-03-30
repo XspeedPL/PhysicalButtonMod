@@ -1,176 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/xeed.xposed.cbppmod"
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:padding="7dp"
 >
-	<LinearLayout
-	    android:id="@+id/editor"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:layout_margin="7dp"
-	>
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	    >
+        <android.support.v7.widget.GridLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:columnCount="2"
+        >
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_nm"
-	            android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="0"
+                app:layout_gravity="center_vertical"
+            />
 	        <AutoCompleteTextView
+                app:layout_gravity="fill_horizontal"
 	            android:id="@+id/ch_nm"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
 	            android:ems="10"
 	            android:hint="@string/diag_nm_hnt"
-	        >
-	            <requestFocus />
-	        </AutoCompleteTextView>
-	    </LinearLayout>
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	    >
+                app:layout_column="1"
+                app:layout_row="0"
+	        />
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_key"
-	            android:layout_gravity="center_vertical"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
-	        />
+                app:layout_column="0"
+                app:layout_row="1"
+                app:layout_gravity="center_vertical"
+            />
 	    	<HorizontalScrollView
-            	android:layout_width="match_parent"
-            	android:layout_height="wrap_content" >
+                app:layout_column="1"
+                app:layout_row="1"
+                app:layout_gravity="fill_horizontal"
+            >
             	<LinearLayout
                		android:id="@+id/keys"
     	            android:layout_width="wrap_content"
   	           	    android:layout_height="wrap_content"
-  	                android:orientation="horizontal" >
-            	</LinearLayout>
-        </HorizontalScrollView>
-	    </LinearLayout>
-
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-	
+  	                android:orientation="horizontal"
+                />
+            </HorizontalScrollView>
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_act"
-	            android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="2"
+                app:layout_gravity="center_vertical"
+            />
 	        <Button
 	            android:id="@+id/ch_act"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
 	            android:text="@string/diag_act"
+                app:layout_column="1"
+                app:layout_row="2"
+                app:layout_gravity="fill_horizontal"
 	        />
-
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+	            android:layout_marginBottom="5dp"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
+	            android:layout_marginTop="5dp"
 	            android:text="@string/diag_rep"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="3"
+                app:layout_gravity="center_vertical"
+            />
+	        <Spinner
+	            android:id="@+id/ch_rep_md"
+	            app:layout_column="1"
+	            android:layout_marginBottom="5dp"
+	            android:layout_marginTop="5dp"
+	            app:layout_row="3"
+                app:layout_gravity="fill_horizontal"
 	        />
-	        <xeed.xposed.cbppmod.TextSeekBar
-	            android:id="@+id/ch_rep"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:text="@string/diag_rep"
-	            android:max="10"
-	            app:textValueMult="1"
-	            app:textSuffix=""
-	        />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-
+            <xeed.xposed.cbppmod.viw.TextSeekBar
+                android:id="@+id/ch_rep"
+                android:layout_width="fill_parent"
+                app:layout_column="0"
+                app:layout_columnSpan="2"
+                android:layout_marginBottom="5dp"
+                app:layout_row="4"
+                android:max="10"
+                android:text="@string/diag_rep"
+                app:textSuffix=""
+                app:textValueMult="1"
+            />
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_vib"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="5"
+                app:layout_gravity="center_vertical"
 	        />
-	        <xeed.xposed.cbppmod.TextSeekBar
+	        <xeed.xposed.cbppmod.viw.TextSeekBar
 	            android:id="@+id/ch_vib"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
 	            android:text="@string/diag_vib"
 	            android:max="100"
 	            app:textValueMult="10"
 	            app:textSuffix="ms"
+                app:layout_column="1"
+                app:layout_row="5"
+                app:layout_gravity="fill_horizontal"
 	        />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	    >
-
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_md"
-	            android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="6"
+                app:layout_gravity="center_vertical"
+            />
 	        <Button
 	            android:id="@+id/ch_md"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
 	            android:text="@string/diag_md"
+                app:layout_column="1"
+                app:layout_row="6"
+                app:layout_gravity="fill_horizontal"
 	        />
-	    </LinearLayout>
-
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-
 	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
 	            android:layout_marginRight="5dp"
 	            android:text="@string/diag_au"
-	            android:textAppearance="?android:attr/textAppearanceMedium" />
-
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="7"
+                app:layout_gravity="center_vertical"
+            />
 	        <Button
 	            android:id="@+id/ch_au"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:text="@string/diag_au" />
-	    </LinearLayout>
-
-	    <CheckBox
-	        android:id="@+id/ch_ccl"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/diag_ccl"
-	    />
-	</LinearLayout>
-</ScrollView>
+	            android:text="@string/diag_au"
+                app:layout_column="1"
+                app:layout_row="7"
+                app:layout_gravity="fill_horizontal"
+            />
+    	    <CheckBox
+    	        android:id="@+id/ch_ccl"
+    	        app:layout_column="0"
+    	        app:layout_columnSpan="2"
+    	        app:layout_row="8"
+    	        android:text="@string/diag_ccl"
+            />
+            <CheckBox
+                android:id="@+id/ch_tst"
+                app:layout_column="0"
+                app:layout_columnSpan="2"
+                app:layout_row="9"
+                android:text="@string/diag_tst"
+            />
+            <Button
+                android:id="@+id/ch_adv_cnv"
+                app:layout_column="0"
+                app:layout_columnSpan="2"
+                app:layout_row="10"
+                android:text="@string/diag_adv_cnv"
+            />
+	   </android.support.v7.widget.GridLayout>
+</FrameLayout>

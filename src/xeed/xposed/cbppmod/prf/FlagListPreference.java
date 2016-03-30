@@ -1,4 +1,4 @@
-package xeed.xposed.cbppmod;
+package xeed.xposed.cbppmod.prf;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;

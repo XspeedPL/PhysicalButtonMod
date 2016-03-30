@@ -1,4 +1,4 @@
-package xeed.xposed.cbppmod;
+package xeed.xposed.cbppmod.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.view.*;
 import android.widget.*;
+import xeed.xposed.cbppmod.R;
 
 public final class AppDialog extends AlertDialog.Builder implements OnClickListener
 {
