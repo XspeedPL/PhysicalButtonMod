@@ -21,7 +21,5 @@
         app:remove_enabled="true"
         app:remove_mode="flingRemove"
         app:use_default_controller="true"
-        app:drag_handle_id="@id/drag_handle"
-        app:fling_handle_id="@id/drag_handle"
     />
 </LinearLayout>

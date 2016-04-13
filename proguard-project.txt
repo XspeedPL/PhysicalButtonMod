@@ -10,6 +10,4 @@
 
 -libraryjars ../Libraries/XposedBridgeApi.jar
 
--libraryjars ../Libraries/android-4.4_r1.jar
-
 -libraryjars ../ZZHacks/bin

@@ -1,7 +1,6 @@
 package xeed.xposed.cbppmod.ui;
 
 import java.util.ListIterator;
-
 import android.content.*;
 import android.content.DialogInterface.*;
 import android.os.Bundle;
@@ -11,12 +10,13 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.*;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import xeed.library.ui.BaseSettings;
+import xeed.library.ui.SimpleDialog;
 import xeed.xposed.cbppmod.*;
 
-public final class ChainEditFragment extends Fragment implements OnFocusChangeListener, OnCheckedChangeListener, OnClickListener, OnSeekBarChangeListener, OnItemSelectedListener
+public final class ChainEditFragment extends Fragment implements OnFocusChangeListener, OnCheckedChangeListener, OnClickListener, OnSeekBarChangeListener
 {
     private PBMain pb = null;
     private PagerAdapter pa = null;
@@ -57,9 +57,7 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         layout = true;
         final ViewGroup ret = (ViewGroup)li.inflate(R.layout.editor, vg, false);
         PBMain.populateKeys((ViewGroup)ret.findViewById(R.id.keys), li, pa.edit, this);
-        final AutoCompleteTextView actv = (AutoCompleteTextView)ret.findViewById(R.id.ch_nm);
-        actv.setText(pa.edit.nm);
-        actv.setOnFocusChangeListener(this);
+        ret.findViewById(R.id.ch_nm).setOnFocusChangeListener(this);
         Button bt = (Button)ret.findViewById(R.id.ch_act);
         bt.setText(PBMain.action(pa.edit.act));
         bt.setOnClickListener(this);
@@ -69,29 +67,18 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         bt = (Button)ret.findViewById(R.id.ch_au);
         bt.setText(pb.audio(pa.edit.au));
         bt.setOnClickListener(this);
-        bt = (Button)ret.findViewById(R.id.ch_adv_cnv);
-        if (pa.edit.isEz()) bt.setOnClickListener(this);
-        else bt.setVisibility(View.GONE);
-        CheckBox cb = (CheckBox)ret.findViewById(R.id.ch_ccl);
-        cb.setChecked(pa.edit.ccl);
-        cb.setOnCheckedChangeListener(this);
-        cb.setTag(Boolean.TRUE);
-        cb = (CheckBox)ret.findViewById(R.id.ch_tst);
-        cb.setChecked(pa.edit.tst);
-        cb.setOnCheckedChangeListener(this);
-        final Spinner s = (Spinner)ret.findViewById(R.id.ch_rep_md);
-        final String[] rep_items = PBMain.r.getStringArray(R.array.rep_items);
-        s.setAdapter(new ArrayAdapter<String>(pb, android.R.layout.simple_list_item_1, rep_items));
-        s.setSelection(pa.edit.rep == -1 ? 1 : 0);
-        s.setOnItemSelectedListener(this);
-        SeekBar sb = (SeekBar)ret.findViewById(R.id.ch_rep);
-        if (pa.edit.rep == -1) sb.setVisibility(View.GONE);
-        else sb.setProgress(pa.edit.rep);
-        sb.setOnSeekBarChangeListener(this);
-        sb.setTag(Boolean.TRUE);
-        sb = (SeekBar)ret.findViewById(R.id.ch_vib);
-        sb.setProgress(pa.edit.vib / 10);
-        sb.setOnSeekBarChangeListener(this);
+        bt = (Button)ret.findViewById(R.id.ch_pl);
+        bt.setText(pb.music(pa.edit.pl));
+        bt.setOnClickListener(this);
+        bt = (Button)ret.findViewById(R.id.ch_not);
+        bt.setText(pb.notify(pa.edit.not));
+        bt.setOnClickListener(this);
+        ((Button)ret.findViewById(R.id.ch_adv_cnv)).setOnClickListener(this);
+        ((CheckBox)ret.findViewById(R.id.ch_ccl)).setOnCheckedChangeListener(this);
+        ((CheckBox)ret.findViewById(R.id.ch_rep_md)).setOnCheckedChangeListener(this);
+        ((CheckBox)ret.findViewById(R.id.ch_scr)).setOnCheckedChangeListener(this);
+        ((SeekBar)ret.findViewById(R.id.ch_rep)).setOnSeekBarChangeListener(this);
+        ((SeekBar)ret.findViewById(R.id.ch_vib)).setOnSeekBarChangeListener(this);
         layout = false;
         return ret;
     }
@@ -101,19 +88,24 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         ((Button)getView().findViewById(R.id.ch_act)).setText(PBMain.action(pa.edit.act));
         onChange(false);
     }
-    
+
     @Override
     public final void onClick(final View v)
     {
-        final boolean md = v.getId() == R.id.ch_md;
+        final int multi;
+        if (v.getId() == R.id.ch_md) multi = 1;
+        else if (v.getId() == R.id.ch_au) multi = 2;
+        else if (v.getId() == R.id.ch_pl) multi = 3;
+        else if (v.getId() == R.id.ch_not) multi = 4;
+        else multi = 0;
         if (v.getId() == R.id.ch_act)
-            new ActionDialog(this, pa.edit.act).show();
-        else if (md || v.getId() == R.id.ch_au)
+            new ActionDialog(this, pa.edit.act, BaseSettings.getDiagTh()).show();
+        else if (multi > 0)
         {
-            final AlertDialog.Builder b = new AlertDialog.Builder(pb);
-            b.setTitle(md ? R.string.diag_sel_md : R.string.diag_sel_au);
+            final AlertDialog.Builder b = new AlertDialog.Builder(pb, BaseSettings.getDiagTh());
+            b.setTitle(multi == 1 ? R.string.diag_sel_md : multi == 2 ? R.string.diag_sel_au : multi == 3 ? R.string.diag_sel_pl : R.string.diag_sel_not);
             final boolean[] arr = new boolean[3];
-            for (int x = md ? pa.edit.md : pa.edit.au, i = 0; i < 3; ++i, x >>= 1)
+            for (int x = multi == 1 ? pa.edit.md : multi == 2 ? pa.edit.au : multi == 3 ? pa.edit.pl : pa.edit.not, i = 0; i < 3; ++i, x >>= 1)
                 arr[i] = (x & 1) == 1;
             b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
             {
@@ -123,21 +115,31 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
                     int x = 0;
                     for (int i = 2; i >= 0; --i)
                         x = (x << 1) | (arr[i] ? 1 : 0);
-                    if (md)
+                    if (multi == 1)
                     {
                         pa.edit.md = x;
                         ((Button)v).setText(pb.mode(pa.edit.md));
                     }
-                    else
+                    else if (multi == 2)
                     {
                         pa.edit.au = x;
                         ((Button)v).setText(pb.audio(pa.edit.au));
+                    }
+                    else if (multi == 3)
+                    {
+                        pa.edit.pl = x;
+                        ((Button)v).setText(pb.music(pa.edit.pl));
+                    }
+                    else
+                    {
+                        pa.edit.not = x;
+                        ((Button)v).setText(pb.notify(pa.edit.not));
                     }
                     onChange(false);
                 }
             });
             b.setNegativeButton(R.string.diag_cancel, null);
-            b.setMultiChoiceItems(md ? R.array.md_items : R.array.au_items, arr, new OnMultiChoiceClickListener()
+            b.setMultiChoiceItems(multi == 1 ? R.array.md_items : multi == 2 ? R.array.au_items : multi == 3 ? R.array.pl_items : R.array.not_items, arr, new OnMultiChoiceClickListener()
             {
                 @Override
                 public final void onClick(final DialogInterface di, final int pos, final boolean f)
@@ -150,7 +152,7 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         else if (v.getId() == R.id.add_key) keyDialog(new Key(0, false, 0), 1);
         else if (v.getId() == R.id.ch_ez)
         {
-            final AlertDialog.Builder b = new AlertDialog.Builder(pb);
+            final AlertDialog.Builder b = new AlertDialog.Builder(pb, BaseSettings.getDiagTh());
             b.setSingleChoiceItems(R.array.ez_types, pa.edit.getEz(), new DialogInterface.OnClickListener()
             {
                 @Override
@@ -176,26 +178,23 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
     
     private final void keyDialog(final Key k, final int type)
     {
-        final AlertDialog.Builder b = new AlertDialog.Builder(pb);
+        final AlertDialog.Builder b = new AlertDialog.Builder(pb, BaseSettings.getDiagTh());
         b.setView(R.layout.keyeditor);
         b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
         {
             @Override
             public final void onClick(final DialogInterface di, final int i)
             {
-                if (type > 1)
+                final int dl = ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 50;
+                if (type < 2 || PBMain.isKeySafe(lk)) updateKey(dl, k, type);
+                else SimpleDialog.create(pb, BaseSettings.getDiagTh(), R.string.diag_yes, R.string.diag_no, R.string.diag_cnf_t, R.string.diag_cnf_dng, new DialogInterface.OnClickListener()
                 {
-                    pa.edit.setEz(type - 2, lk, ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 50);
-                }
-                else
-                {
-                    k.code = lk;
-                    k.dn = ((CheckBox)d.findViewById(R.id.key_dn)).isChecked();
-                    k.dl = ((SeekBar)d.findViewById(R.id.key_dl)).getProgress() * 50;
-                    if (type == 1) pa.edit.ks.add(k);
-                }
-                PBMain.populateKeys((ViewGroup)getView().findViewById(R.id.keys), LayoutInflater.from(pb), pa.edit, ChainEditFragment.this);
-                onChange(false);
+                    @Override
+                    public final void onClick(final DialogInterface di, final int i)
+                    {
+                        updateKey(dl, k, type);
+                    }
+                }).show();
             }
         });
         b.setNegativeButton(R.string.diag_cancel, null);
@@ -229,7 +228,7 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
                     @Override
                     public final void onCheckedChanged(final CompoundButton cb, final boolean f)
                     {
-                        pb.requestIntercept(f ? 1 : 0);
+                        pb.requestIntercept(f);
                     }
                 });
             }
@@ -240,10 +239,27 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
             public final void onDismiss(final DialogInterface di)
             {
                 d = null;
-                pb.requestIntercept(0);
+                pb.requestIntercept(false);
             }
         });
         d.show();
+    }
+    
+    private final void updateKey(final int dl, final Key k, final int type)
+    {
+        if (type > 1)
+        {
+            pa.edit.setEz(type - 2, lk, dl);
+        }
+        else
+        {
+            k.code = lk;
+            k.dn = ((CheckBox)d.findViewById(R.id.key_dn)).isChecked();
+            k.dl = dl;
+            if (type == 1) pa.edit.ks.add(k);
+        }
+        PBMain.populateKeys((ViewGroup)getView().findViewById(R.id.keys), LayoutInflater.from(pb), pa.edit, ChainEditFragment.this);
+        onChange(false);
     }
     
     public final void updateEdit()
@@ -257,9 +273,11 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         ((Button)vg.findViewById(R.id.ch_act)).setText(PBMain.action(pa.edit.act));
         ((Button)vg.findViewById(R.id.ch_md)).setText(pb.mode(pa.edit.md));
         ((Button)vg.findViewById(R.id.ch_au)).setText(pb.audio(pa.edit.au));
+        ((Button)vg.findViewById(R.id.ch_pl)).setText(pb.music(pa.edit.pl));
+        ((Button)vg.findViewById(R.id.ch_adv_cnv)).setVisibility(pa.edit.isEz() ? View.VISIBLE : View.GONE);
         ((CheckBox)vg.findViewById(R.id.ch_ccl)).setChecked(pa.edit.ccl);
-        ((CheckBox)vg.findViewById(R.id.ch_tst)).setChecked(pa.edit.tst);
-        ((Spinner)vg.findViewById(R.id.ch_rep_md)).setSelection(pa.edit.rep == -1 ? 1 : 0);
+        ((CheckBox)vg.findViewById(R.id.ch_scr)).setChecked(pa.edit.scr);
+        ((CheckBox)vg.findViewById(R.id.ch_rep_md)).setChecked(pa.edit.rep == -1);
         final SeekBar sb = (SeekBar)vg.findViewById(R.id.ch_rep);
         sb.setProgress(pa.edit.rep == -1 ? 0 : pa.edit.rep);
         sb.setVisibility(pa.edit.rep == -1 ? View.GONE : View.VISIBLE);
@@ -294,7 +312,13 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
     public final void onCheckedChanged(final CompoundButton cb, final boolean c)
     {
         if (cb.getId() == R.id.ch_ccl) pa.edit.ccl = c;
-        else pa.edit.tst = c;
+        else if (cb.getId() == R.id.ch_scr) pa.edit.scr = c;
+        else if (cb.getId() == R.id.ch_rep_md)
+        {
+            getView().findViewById(R.id.ch_rep).setVisibility(c ? View.GONE : View.VISIBLE);
+            pa.edit.rep = c ? -1 : 0;
+            onChange(false);
+        }
         onChange(false);
     }
 
@@ -316,22 +340,4 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
 
     @Override
     public final void onStopTrackingTouch(final SeekBar sb) { }
-
-    @Override
-    public final void onItemSelected(final AdapterView<?> av, final View v, final int pos, final long id)
-    {
-        final int rep = pos == 0 ? 0 : -1;
-        if (rep != pa.edit.rep)
-        {
-            getView().findViewById(R.id.ch_rep).setVisibility(pos == 0 ? View.VISIBLE : View.GONE);
-            pa.edit.rep = rep;
-            onChange(false);
-        }
-    }
-
-    @Override
-    public final void onNothingSelected(final AdapterView<?> av)
-    {
-        av.setSelection(0);
-    }
 }

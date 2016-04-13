@@ -11,7 +11,6 @@ import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
@@ -19,6 +18,8 @@ import android.util.SparseArray;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
+import xeed.library.ui.BaseSettings;
+import xeed.library.ui.SimpleDialog;
 import xeed.xposed.cbppmod.ui.*;
 
 public final class PBMain extends AppCompatActivity
@@ -30,10 +31,11 @@ public final class PBMain extends AppCompatActivity
 	public static Resources r = null;
 	
 	public SharedPreferences sp = null;
-	private String[] au_v, md_v;
+	private String[] au_v, md_v, pl_v, not_v;
 	private PagerAdapter spa = null;
 	private ViewPager vp = null;
 	private InAppMgmt pro = null;
+	private int th = -1;
 	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
@@ -44,12 +46,21 @@ public final class PBMain extends AppCompatActivity
 		r = getResources();
 		au_v = r.getStringArray(R.array.au_items);
 		md_v = r.getStringArray(R.array.md_items);
+		pl_v = r.getStringArray(R.array.pl_items);
+		not_v = r.getStringArray(R.array.not_items);
 		sp = getSharedPreferences("pbmcsettings", MODE_WORLD_READABLE);
+		setTheme(th = BaseSettings.getActTh());
 		setContentView(R.layout.main);
 		vp = (ViewPager)findViewById(R.id.pager);
 		vp.setOffscreenPageLimit(4);
 		spa = new PagerAdapter(vp, getSupportFragmentManager());
 		vp.setAdapter(spa);
+	}
+	
+	@Override
+	public final void onRequestPermissionsResult(final int req, final String[] perms, final int[] ress)
+	{
+	    
 	}
 	
 	private final InAppMgmt getInApp()
@@ -148,8 +159,15 @@ public final class PBMain extends AppCompatActivity
 	@Override
 	protected final void onPause()
 	{
-		requestIntercept(0);
+		requestIntercept(false);
 		super.onPause();
+	}
+	
+	@Override
+	protected final void onResume()
+	{
+	    super.onResume();
+	    if (th != BaseSettings.getActTh()) recreate();
 	}
 
 	@Override
@@ -159,28 +177,15 @@ public final class PBMain extends AppCompatActivity
 		final PackageInfo pi = getVerInfo();
 		if (pi.versionCode != getActiveVerCode())
 		{
-			final AlertDialog.Builder b = new AlertDialog.Builder(this);
-			if (getActiveVerCode() == 0) b.setMessage(R.string.diag_reboot);
-			else b.setMessage(r.getString(R.string.diag_update, pi.versionName + " (" + pi.versionCode + ')', getActiveVerName() + " (" + getActiveVerCode() + ')'));
-			b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(final DialogInterface di, final int which)
-				{
-					di.dismiss();
-				}
-			});
-			final AlertDialog ad = b.create();
-			if (getActiveVerCode() == 0)
-				ad.setOnDismissListener(new OnDismissListener()
-				{
-					@Override
-					public final void onDismiss(final DialogInterface di)
-					{
-						finish();
-					}
-				});
-			ad.show();
+		    final CharSequence msg = getString(getActiveVerCode() == 0 ? R.string.diag_reboot : R.string.diag_update, pi.versionCode, getActiveVerCode());
+		    SimpleDialog.create(this, BaseSettings.getDiagTh(), R.string.diag_ok, R.string.app_name, msg, getActiveVerCode() == 0 ? new OnDismissListener()
+            {
+                @Override
+                public final void onDismiss(final DialogInterface di)
+                {
+                    finish();
+                }
+            } : null).show();
 		}
 	}
 
@@ -235,6 +240,11 @@ public final class PBMain extends AppCompatActivity
 			return true;
 		}
 		return super.onOptionsItemSelected(mi);
+	}
+	
+	public static final boolean isKeySafe(final int key)
+	{
+	    return key != KeyEvent.KEYCODE_POWER && key != KeyEvent.KEYCODE_HOME;
 	}
 	
 	@Override
@@ -307,29 +317,56 @@ public final class PBMain extends AppCompatActivity
     public final String mode(final int md)
     {
     	String ret = "";
-    	if ((md & 7) == 7) ret = "+++" + r.getString(R.string.diag_alw);
+    	if ((md & 7) == 7) ret = "+++" + getString(R.string.diag_alw);
     	else
     	{
     		if ((md & 1) == 1) ret += " + " + md_v[0];
     		if ((md & 2) == 2) ret += " + " + md_v[1];
     		if ((md & 4) == 4) ret += " + " + md_v[2];
     	}
-    	if (ret.equals("")) ret = "---" + r.getString(R.string.diag_nev);
+    	if (ret.equals("")) ret = "---" + getString(R.string.diag_nev);
     	return ret.substring(3);
     }
 	
     public final String audio(final int au)
     {
     	String ret = "";
-    	if ((au & 7) == 7) ret = "+++" + r.getString(R.string.diag_alw);
+    	if ((au & 7) == 7) ret = "+++" + getString(R.string.diag_alw);
     	else
     	{
     		if ((au & 1) == 1) ret += " + " + au_v[0];
     		if ((au & 2) == 2) ret += " + " + au_v[1];
     		if ((au & 4) == 4) ret += " + " + au_v[2];
     	}
-    	if (ret.equals("")) ret = "---" + r.getString(R.string.diag_nev);
+    	if (ret.equals("")) ret = "---" + getString(R.string.diag_nev);
     	return ret.substring(3);
+    }
+    
+    public final String music(final int pl)
+    {
+        String ret = "";
+        if ((pl & 3) == 3) ret = "+++" + getString(R.string.diag_alw);
+        else
+        {
+            if ((pl & 1) == 1) ret += " + " + pl_v[0];
+            if ((pl & 2) == 2) ret += " + " + pl_v[1];
+        }
+        if (ret.equals("")) ret = "---" + getString(R.string.diag_nev);
+        return ret.substring(3);
+    }
+    
+    public final String notify(final int not)
+    {
+        String ret = "";
+        if ((not & 7) == 7) ret = "+++" + getString(R.string.diag_all);
+        else
+        {
+            if ((not & 1) == 1) ret += " + " + not_v[0];
+            if ((not & 2) == 2) ret += " + " + not_v[1];
+            if ((not & 4) == 4) ret += " + " + not_v[2];
+        }
+        if (ret.equals("")) ret = "---" + getString(R.string.diag_no);
+        return ret.substring(3);
     }
     
 	private final PackageInfo getVerInfo()
@@ -338,13 +375,14 @@ public final class PBMain extends AppCompatActivity
 		catch (final Exception ex) { return null; }
 	}
 
-	public static final String getActiveVerName() { return "pre-4.0"; }
+	@Deprecated
+	public static final String getActiveVerName() { return ""; }
 
 	public static final int getActiveVerCode() { return 0; }
 
-	public final void requestIntercept(final int state)
+	public final void requestIntercept(final boolean state)
 	{
-        final Intent i = new Intent("xeed.xposed.cbppmod.Update");
+        final Intent i = new Intent("xeed.xposed.cbppmod.Send");
         i.putExtra("xeed.xposed.cbppmod.Send", state);
         sendBroadcast(i);
 	}

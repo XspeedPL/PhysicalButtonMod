@@ -5,14 +5,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 >
-    <ToggleButton
-        android:id="@+id/tgl_itc"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_margin="5dp"
-        android:textOn="@string/diag_itc"
-        android:textOff="@string/diag_itc"
-    />
+    >
+        <ToggleButton
+            android:id="@+id/tgl_itc"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textOn="@string/diag_itc"
+            android:textOff="@string/diag_itc"
+            android:layout_toLeftOf="@+id/btn_clr"
+            android:layout_toStartOf="@+id/btn_clr"
+            android:layout_centerVertical="true"
+        />
+        <ImageButton
+            android:id="@+id/btn_clr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/diag_cancel"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+        />
+    </RelativeLayout>
     <org.apmem.tools.layouts.FlowLayout
         android:id="@+id/keys"
     	android:layout_width="match_parent"

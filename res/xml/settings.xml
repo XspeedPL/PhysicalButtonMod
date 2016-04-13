@@ -1,21 +1,11 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/title_pbsettings"
-    android:key="pbmcsettings">
-    <PreferenceCategory
-        android:title="@string/pref_g_general"
-    >
-        <CheckBoxPreference
-            android:key="hideApp"
-            android:title="@string/pref_hideapp_t"
-            android:summary="@string/pref_hideapp_s"
-        />
+>
 	    <xeed.xposed.cbppmod.prf.FlagListPreference
 	        android:key="usePlugIn"
 	        android:title="@string/pref_useplugin_t"
 	        android:summary="@string/pref_useplugin_s"
 	        android:entries="@array/au_items"
-	        android:entryValues="@array/au_items"
 	    />
 	    <xeed.xposed.cbppmod.prf.ValueListPreference
 	        android:key="setPlayer"
@@ -23,19 +13,18 @@
 	        android:summary="@string/pref_setplayer_s"
 	        android:defaultValue="system"
 	    />
-	    <xeed.xposed.cbppmod.prf.IntListPreference
+	    <xeed.library.preference.IntListPreference
 	        android:key="setPlrMode"
 	        android:title="@string/pref_setplrmode_t"
 	        android:summary="@string/pref_setplrmode_s"
 	        android:entries="@array/pref_setplrmode_e"
-	        android:entryValues="@array/pref_setplrmode_e"
 	    />
 	    <CheckBoxPreference
 	        android:key="useStartVol"
 	        android:title="@string/pref_usestartvol_t"
 	        android:summary="@string/pref_usestartvol_s"
 	    />
-    	<xeed.xposed.cbppmod.prf.SeekBarPreference
+    	<xeed.library.preference.SeekBarPreference
             android:key="startVol"
             android:dialogMessage="@string/pref_startvol_d"
             android:text="%"
@@ -45,32 +34,11 @@
             android:dependency="useStartVol"
             android:defaultValue="50"
         />
-  	</PreferenceCategory>
-  	<PreferenceCategory
-        android:title="@string/pref_g_fixes"
-    >
-    	<CheckBoxPreference
-	        android:key="debugLog"
-	        android:title="@string/pref_debuglog_t"
-	        android:summary="@string/pref_debuglog_s"
-	    />
-  	</PreferenceCategory>
-  	<PreferenceCategory
-        android:title="@string/pref_g_info"
-    >
-    	<xeed.xposed.cbppmod.prf.InfoDialogPreference
-    	    android:key="authors"
-    	    android:title="@string/pref_authors_t"
-    	    android:summary="@string/pref_authors_s"
-    	    android:dialogMessage="@string/pref_authors_d"
-    	/>
-    	<Preference
-            android:title="@string/pref_donate_t"
-            android:summary="@string/pref_donate_s">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=xspeedpl%40windowslive.com&amp;no_shipping=1&amp;item_name=PBMC%20Development%20Support"
-            />
-        </Preference>
-  	</PreferenceCategory>
+        <RingtonePreference
+            android:key="soundURI"
+            android:showDefault="true"
+            android:ringtoneType="notification"
+            android:title="@string/pref_sounduri_t"
+            android:summary="@string/pref_sounduri_s"
+        />
 </PreferenceScreen>

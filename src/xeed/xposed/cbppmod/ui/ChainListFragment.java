@@ -7,10 +7,11 @@ import android.content.*;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.*;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import xeed.library.ui.BaseSettings;
+import xeed.library.ui.SimpleDialog;
 import xeed.xposed.cbppmod.*;
 
 public final class ChainListFragment extends Fragment implements DragSortListener, OnItemClickListener
@@ -33,10 +34,7 @@ public final class ChainListFragment extends Fragment implements DragSortListene
     {
         if (!pa.getIterator().hasNext() && PBMain.getActiveVerCode() != 0)
         {
-            final AlertDialog.Builder bu = new AlertDialog.Builder(pb);
-            bu.setMessage(R.string.diag_no_chs);
-            bu.setNegativeButton(R.string.diag_no, null);
-            bu.setPositiveButton(R.string.diag_yes, new DialogInterface.OnClickListener()
+            SimpleDialog.create(getContext(), BaseSettings.getDiagTh(), R.string.diag_yes, R.string.diag_no, R.string.diag_cnf_t, R.string.diag_no_chs, new DialogInterface.OnClickListener()
             {
                 @Override
                 public void onClick(final DialogInterface di, final int which)
@@ -76,8 +74,7 @@ public final class ChainListFragment extends Fragment implements DragSortListene
                     
                     changed(false);
                 }
-            });
-            bu.create().show();
+            }).show();
         }
         final LinearLayout ll = (LinearLayout)li.inflate(R.layout.chainlist, vg, false);
         ((TextView)ll.findViewById(R.id.status)).setText(getString(R.string.diag_sts) + ": " + getString(R.string.diag_sav));
@@ -141,7 +138,7 @@ public final class ChainListFragment extends Fragment implements DragSortListene
             final ViewGroup keys = (ViewGroup)ll.findViewById(R.id.keys);
             PBMain.populateKeys(keys, li, ch, null);
             ((TextView)ll.findViewById(R.id.name)).setText(ch.nm);
-            ((TextView)ll.findViewById(R.id.desc)).setText(getString(R.string.diag_md) + ": " + pb.mode(ch.md) + ", " + getString(R.string.diag_au) + ": " + pb.audio(ch.au));
+            ((TextView)ll.findViewById(R.id.desc)).setText(getString(R.string.diag_md) + ": " + pb.mode(ch.md) + ", " + getString(R.string.diag_au) + ": " + pb.audio(ch.au) + ", " + getString(R.string.diag_pl) + ": " + pb.music(ch.pl));
             return ll;
         }
     }
@@ -158,10 +155,7 @@ public final class ChainListFragment extends Fragment implements DragSortListene
     @Override
     public final void remove(final int pos)
     {
-        final AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-        b.setTitle(R.string.diag_cnf_rmv);
-        b.setNegativeButton(R.string.diag_no, null);
-        b.setPositiveButton(R.string.diag_yes, new DialogInterface.OnClickListener()
+        SimpleDialog.create(getContext(), BaseSettings.getDiagTh(), R.string.diag_yes, R.string.diag_no, R.string.diag_cnf_t, R.string.diag_cnf_rmv, new DialogInterface.OnClickListener()
         {
             @Override
             public final void onClick(final DialogInterface di, final int i)
@@ -170,16 +164,13 @@ public final class ChainListFragment extends Fragment implements DragSortListene
                 pa.getChains().remove(pos);
                 changed(false);
             }
-        });
-        final AlertDialog ad = b.create();
-        ad.setOnDismissListener(new OnDismissListener()
+        }, new OnDismissListener()
         {
             @Override
             public final void onDismiss(final DialogInterface di)
             {
                 ca.notifyDataSetChanged();
             }
-        });
-        ad.show();
+        }).show();
     }
 }

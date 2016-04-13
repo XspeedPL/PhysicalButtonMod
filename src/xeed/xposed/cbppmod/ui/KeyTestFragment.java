@@ -9,15 +9,16 @@ import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
 import xeed.xposed.cbppmod.*;
 
-public final class KeyTestFragment extends Fragment implements OnCheckedChangeListener
+public final class KeyTestFragment extends Fragment implements OnCheckedChangeListener, OnClickListener
 {
-    private static final int maxlen = 8;
+    private static final int maxlen = 9;
     private static final LinkedList<Key> chain = new LinkedList<Key>();
     private final Chain ch = new Chain(null, "");
     private PBMain pb = null;
@@ -60,6 +61,7 @@ public final class KeyTestFragment extends Fragment implements OnCheckedChangeLi
         ch.ks.clear();
         ch.ks.addAll(chain);
         PBMain.populateKeys((ViewGroup)ret.findViewById(R.id.keys), li, ch, null);
+        ret.findViewById(R.id.btn_clr).setOnClickListener(this);
         return ret;
     }
     
@@ -74,7 +76,7 @@ public final class KeyTestFragment extends Fragment implements OnCheckedChangeLi
                 final Key k = it.next();
                 if (k.code == key)
                 {
-                    k.dl = ((int)(t - k.sw) / 10) * 10;
+                    k.dl = ((int)(t - k.sw) / 50) * 50;
                     break;
                 }
             }
@@ -108,6 +110,16 @@ public final class KeyTestFragment extends Fragment implements OnCheckedChangeLi
     @Override
     public final void onCheckedChanged(final CompoundButton cb, final boolean f)
     {
-        pb.requestIntercept(f ? 1 : 0);
+        pb.requestIntercept(f);
+    }
+
+    @Override
+    public final void onClick(final View v)
+    {
+        if (v.getId() == R.id.btn_clr)
+        {
+            chain.clear();
+            keysChanged();
+        }
     }
 }

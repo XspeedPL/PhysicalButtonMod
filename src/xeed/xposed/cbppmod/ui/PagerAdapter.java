@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.support.v4.app.*;
 import android.support.v4.view.ViewPager;
-import xeed.xposed.cbppmod.R;
-import xeed.xposed.cbppmod.Chain;
-import xeed.xposed.cbppmod.PBMain;
+import xeed.xposed.cbppmod.*;
 
 public final class PagerAdapter extends FragmentStatePagerAdapter
 {

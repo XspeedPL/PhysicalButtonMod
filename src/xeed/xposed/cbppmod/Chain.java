@@ -8,10 +8,10 @@ import android.content.SharedPreferences.Editor;
 public final class Chain
 {
 	public final LinkedList<Key> ks = new LinkedList<Key>();
-	public int vib = 200, rep = 0, au = 7, md = 1;
+	public int vib = 200, rep = 0, au = 7, md = 1, pl = 7, not = 0;
 	private int ez = -1;
 	public Action act;
-	public boolean ccl = true, tst = false, en = true;
+	public boolean ccl = true, en = true, scr = false;
     public String nm;
 	
 	public Chain(final SharedPreferences sp, final String name)
@@ -38,9 +38,11 @@ public final class Chain
             vib = sp.getInt(pref + "vib", 200);
             rep = sp.getInt(pref + "rep", 0);
             au = sp.getInt(pref + "au", 7);
+            pl = sp.getInt(pref + "pl", 7);
             md = sp.getInt(pref + "md", 1);
             ccl = sp.getBoolean(pref + "ccl", true);
-            tst = sp.getBoolean(pref + "tst", false);
+            scr = sp.getBoolean(pref + "scr", false);
+            not = sp.getInt(pref + "not", 0);
         }
         catch (final Exception ex) { }
         int kct = sp.getInt(pref + "kct", 0);
@@ -62,9 +64,11 @@ public final class Chain
         e.putInt(pref + "vib", vib);
         e.putInt(pref + "rep", rep);
         e.putInt(pref + "au", au);
+        e.putInt(pref + "pl", pl);
         e.putInt(pref + "md", md);
         e.putBoolean(pref + "ccl", ccl);
-        e.putBoolean(pref + "tst", tst);
+        e.putBoolean(pref + "scr", scr);
+        e.putInt(pref + "not", not);
         e.putInt(pref + "kct", ks.size());
         int i = -1;
         for (final Key k : ks)

@@ -1,15 +1,11 @@
 package xeed.xposed.cbppmod;
 
 import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.app.*;
+import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -63,6 +59,7 @@ public final class Coded
 		{
 			if (i != null && i.getAction() == IACT_TOGGLE_LIGHT)
 			{
+			    
 				return toggleFlash(true) ? START_REDELIVER_INTENT : START_NOT_STICKY;
 			}
 			stopSelf();
@@ -85,10 +82,15 @@ public final class Coded
 			if (p == null) return false;
 			if (on)
 			{
-				p.setFlashMode(Parameters.FLASH_MODE_TORCH);
-				cam.setParameters(p);
-				cam.startPreview();
-				startForeground(2, mTorchNotif);
+			    final List<String> l = p.getSupportedFlashModes();
+			    if (l != null && l.contains(Parameters.FLASH_MODE_TORCH))
+			    {
+    				p.setFlashMode(Parameters.FLASH_MODE_TORCH);
+    				cam.setParameters(p);
+    				cam.startPreview();
+    				startForeground(2, mTorchNotif);
+			    }
+			    else return false;
 			}
 			else
 			{
