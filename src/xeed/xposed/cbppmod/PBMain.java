@@ -60,7 +60,7 @@ public final class PBMain extends AppCompatActivity
 	@Override
 	public final void onRequestPermissionsResult(final int req, final String[] perms, final int[] ress)
 	{
-	    
+	    // TODO?
 	}
 	
 	private final InAppMgmt getInApp()

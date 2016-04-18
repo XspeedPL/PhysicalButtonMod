@@ -90,12 +90,6 @@
         <item>Pulse light</item>
     </string-array>
     
-    <string name="diag_reboot">You need to activate this module in the Xposed Installer and reboot your device to complete the installation process.</string>
-    <!-- Use '\n' for line breaks. -->
-    <string name="diag_update">You need to reboot your device to complete the updating process.\n
-Installed version: %1$s\n
-Active version: %2$s</string>
-    
     <string name="tab_chns">Chain list</string>
     <string name="tab_test">Key test</string>
     <string name="tab_edit">Edit:</string>
