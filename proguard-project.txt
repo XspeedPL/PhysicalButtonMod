@@ -1,9 +1,14 @@
 -keep public class xeed.xposed.cbppmod.PhysicalButtonMod
 
--keepclassmembers public class xeed.xposed.cbppmod.PBMain
+-keep public class xeed.xposed.cbppmod.PBMain
 {
 	public static java.lang.String getActiveVerName();
 	public static int getActiveVerCode();
+}
+
+-keep public class xeed.library.ui.BaseSettings
+{
+	protected static int getActiveVer();
 }
 
 -keepattributes InnerClasses
