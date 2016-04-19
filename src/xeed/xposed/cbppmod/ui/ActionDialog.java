@@ -2,15 +2,12 @@ package xeed.xposed.cbppmod.ui;
 
 import java.util.*;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnShowListener;
 import android.content.pm.*;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.view.*;
@@ -178,12 +175,6 @@ public final class ActionDialog
 				public final void onClick(final DialogInterface di, final int i)
 				{
 					if (i == Action.CODED_PAPP && Build.VERSION.SDK_INT < 11) Toast.makeText(cef.getContext(), cef.getString(R.string.diag_and_req, "11 (Honeycomb)"), Toast.LENGTH_LONG).show();
-					else if (i == Action.CODED_FLHT && !cef.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) Toast.makeText(cef.getContext(), "ERROR", Toast.LENGTH_SHORT).show();
-					else if (i == Action.CODED_FLHT && ContextCompat.checkSelfPermission(cef.getContext(), Manifest.permission.FLASHLIGHT) != PackageManager.PERMISSION_GRANTED)
-					{
-					    di.dismiss();
-				        ActivityCompat.requestPermissions(cef.getActivity(), new String[] { Manifest.permission.FLASHLIGHT }, 0);
-					}
 					else
 					{
 						di.dismiss();

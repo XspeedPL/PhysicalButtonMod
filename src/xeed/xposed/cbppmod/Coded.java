@@ -2,13 +2,13 @@ package xeed.xposed.cbppmod;
 
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
 import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.*;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
@@ -17,6 +17,8 @@ import android.widget.Toast;
 @SuppressWarnings("deprecation")
 public final class Coded
 {
+    public static final int SDK = Build.VERSION.SDK_INT;
+    
 	public static final String IACT_TOGGLE_LIGHT = "xeed.xposed.cbppmod.TOGGLE_LIGHT";
 	
 	public static final class AppBridge extends BroadcastReceiver
@@ -35,9 +37,9 @@ public final class Coded
 	
 	public static final class LightService extends Service
 	{
-		private Camera cam = null;
-		private Notification mTorchNotif;
-	    private PendingIntent mPendingIntent;
+		private Notification mTorchNotif = null;
+	    private PendingIntent mPendingIntent = null;
+	    private TorchAccess mAccess = null;
 		
 		@Override
 		public final IBinder onBind(final Intent i) { return null; }
@@ -46,6 +48,8 @@ public final class Coded
 		public final void onCreate()
 		{
 			super.onCreate();
+			if (SDK > 22) mAccess = new TorchNew();
+			else mAccess = new TorchOld();
 			final NotificationCompat.Builder b = new NotificationCompat.Builder(this);
 			b.setContentTitle(getResources().getStringArray(R.array.action_coded_k)[Action.CODED_FLHT]);
 			b.setSmallIcon(android.R.drawable.ic_menu_camera);
@@ -57,10 +61,10 @@ public final class Coded
 		@Override
 		public final int onStartCommand(final Intent i, final int f, final int id)
 		{
-			if (i != null && i.getAction() == IACT_TOGGLE_LIGHT)
+			if (i != null && i.getAction() == IACT_TOGGLE_LIGHT && mAccess.toggle(true))
 			{
-			    
-				return toggleFlash(true) ? START_REDELIVER_INTENT : START_NOT_STICKY;
+			    startForeground(2, mTorchNotif);
+			    return START_REDELIVER_INTENT;
 			}
 			stopSelf();
 			return START_NOT_STICKY;
@@ -69,40 +73,86 @@ public final class Coded
 		@Override
 	    public final void onDestroy()
 		{
-	        toggleFlash(false);
+	        mAccess.close();
 	        super.onDestroy();
 	    }
 		
-		public synchronized final boolean toggleFlash(boolean on)
+		private interface TorchAccess
 		{
-			if (cam == null) cam = Camera.open();
-			else if (on) on = false;
-			if (cam == null) return false;
-			final Parameters p = cam.getParameters();
-			if (p == null) return false;
-			if (on)
-			{
-			    final List<String> l = p.getSupportedFlashModes();
-			    if (l != null && l.contains(Parameters.FLASH_MODE_TORCH))
-			    {
-    				p.setFlashMode(Parameters.FLASH_MODE_TORCH);
-    				cam.setParameters(p);
-    				cam.startPreview();
-    				startForeground(2, mTorchNotif);
-			    }
-			    else return false;
-			}
-			else
-			{
-				p.setFlashMode(Parameters.FLASH_MODE_OFF);
-				cam.setParameters(p);
-				cam.stopPreview();
-				cam.release();
-				cam = null;
-				stopForeground(true);
-				stopSelf();
-			}
-			return on;
+		    public boolean toggle(final boolean on);
+		    public void close();
+		}
+		
+		private final class TorchOld implements TorchAccess
+		{
+		    private Camera mCam = null;
+		    
+            @Override
+            public final void close()
+            {
+                if (mCam != null) toggle(false);
+                mCam.release();
+                mCam = null;
+            }
+
+            @Override
+            public synchronized final boolean toggle(final boolean on)
+            {
+                if (mCam == null) mCam = Camera.open();
+                if (mCam == null) return false;
+                final Parameters p = mCam.getParameters();
+                if (on)
+                {
+                    final List<String> l = p.getSupportedFlashModes();
+                    if (l != null && l.contains(Parameters.FLASH_MODE_TORCH))
+                    {
+                        p.setFlashMode(Parameters.FLASH_MODE_TORCH);
+                        mCam.setParameters(p);
+                        mCam.startPreview();
+                    }
+                    else return false;
+                }
+                else
+                {
+                    p.setFlashMode(Parameters.FLASH_MODE_OFF);
+                    mCam.setParameters(p);
+                    mCam.stopPreview();
+                }
+                return on;
+            }
+		}
+		
+		@TargetApi(23)
+		private final class TorchNew implements TorchAccess
+		{
+		    @Override
+		    public final void close() { toggle(false); }
+		    
+		    @Override
+		    public final boolean toggle(final boolean on)
+		    {
+                final CameraManager cammgr = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+                try
+                {
+                    final String[] ids = cammgr.getCameraIdList();
+                    for (final String id : ids)
+                    {
+                        final CameraCharacteristics cc = cammgr.getCameraCharacteristics(id);
+                        if (cc.get(CameraCharacteristics.FLASH_INFO_AVAILABLE))
+                        {
+                            cammgr.setTorchMode(id, on);
+                            return on;
+                        }
+                    }
+                    showError(LightService.this, "No flash");
+                    return !on;
+                }
+                catch (final Exception ex)
+                {
+                    showError(LightService.this, ex.getLocalizedMessage());
+                    return !on;
+                }
+		    }
 		}
 	}
 
@@ -119,11 +169,10 @@ public final class Coded
 		Runtime.getRuntime().exec(new String[] { "setprop", "ctl.restart", "zygote" }).waitFor();
 	}
 	
-	@SuppressLint("InlinedApi")
-	@TargetApi(11)
+    @TargetApi(12)
 	public static final void switchToLastApp(final Context c, final ActivityManager am)
 	{
-		if (Build.VERSION.SDK_INT > 10)
+		if (SDK > 10)
 		{
 			int lastAppId = 0;
 			final Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -146,10 +195,15 @@ public final class Coded
 			}
 			if (lastAppId != 0)
 			{
-				am.moveTaskToFront(lastAppId, Build.VERSION.SDK_INT > 11 ? ActivityManager.MOVE_TASK_NO_USER_ACTION : 0);
+				am.moveTaskToFront(lastAppId, SDK > 11 ? ActivityManager.MOVE_TASK_NO_USER_ACTION : 0);
 				return;
 			}
 		}
-		Toast.makeText(c, "Error", Toast.LENGTH_SHORT).show();
+		showError(c, "Android ver < 11");
     }
+	
+	private static final void showError(final Context c, final String txt)
+	{
+	    Toast.makeText(c, "ERROR: " + txt, Toast.LENGTH_SHORT).show();
+	}
 }
