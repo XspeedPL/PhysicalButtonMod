@@ -1,5 +1,6 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 >
 	    <xeed.xposed.cbppmod.prf.FlagListPreference
 	        android:key="usePlugIn"
@@ -26,9 +27,9 @@
 	    />
     	<xeed.library.preference.SeekBarPreference
             android:key="startVol"
-            android:dialogMessage="@string/pref_startvol_d"
-            android:text="%"
-            android:max="100"
+            app:textSuffix="%"
+            app:textValueMult="5"
+            app:maxValue="100"
             android:summary="@string/pref_startvol_s"
             android:title="@string/pref_startvol_t"
             android:dependency="useStartVol"
@@ -40,5 +41,19 @@
             android:ringtoneType="notification"
             android:title="@string/pref_sounduri_t"
             android:summary="@string/pref_sounduri_s"
+        />
+        <xeed.xposed.cbppmod.prf.ColorPreference
+            android:key="pulseColor"
+            android:title="@string/pref_pulsecolor_t"
+            android:summary="@string/pref_pulsecolor_s"
+        />
+        <xeed.library.preference.SeekBarPreference
+            android:key="pulseTime"
+            app:textSuffix="ms"
+            app:maxValue="1000"
+            android:summary="@string/pref_pulsetime_s"
+            android:title="@string/pref_pulsetime_t"
+            android:defaultValue="100"
+            app:textValueMult="10"
         />
 </PreferenceScreen>

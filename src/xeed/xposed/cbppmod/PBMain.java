@@ -31,7 +31,7 @@ public final class PBMain extends AppCompatActivity
 	public static Resources r = null;
 	
 	public SharedPreferences sp = null;
-	private String[] au_v, md_v, pl_v, not_v;
+	private String[] pl_v, not_v;
 	private PagerAdapter spa = null;
 	private ViewPager vp = null;
 	private InAppMgmt pro = null;
@@ -44,11 +44,10 @@ public final class PBMain extends AppCompatActivity
 	{
 		super.onCreate(b);
 		r = getResources();
-		au_v = r.getStringArray(R.array.au_items);
-		md_v = r.getStringArray(R.array.md_items);
 		pl_v = r.getStringArray(R.array.pl_items);
 		not_v = r.getStringArray(R.array.not_items);
 		sp = getSharedPreferences("pbmcsettings", MODE_WORLD_READABLE);
+		BaseSettings.reloadThemes(sp);
 		setTheme(th = BaseSettings.getActTh());
 		setContentView(R.layout.main);
 		vp = (ViewPager)findViewById(R.id.pager);
@@ -314,29 +313,16 @@ public final class PBMain extends AppCompatActivity
         return ret == null ? arr[0] : ret;
     }
     
-    public final String mode(final int md)
+    public final String btnTxt(final int arrId, final int flags)
     {
     	String ret = "";
-    	if ((md & 7) == 7) ret = "+++" + getString(R.string.diag_alw);
+    	if ((flags & 7) == 7) ret = "+++" + getString(R.string.diag_alw);
     	else
     	{
-    		if ((md & 1) == 1) ret += " + " + md_v[0];
-    		if ((md & 2) == 2) ret += " + " + md_v[1];
-    		if ((md & 4) == 4) ret += " + " + md_v[2];
-    	}
-    	if (ret.equals("")) ret = "---" + getString(R.string.diag_nev);
-    	return ret.substring(3);
-    }
-	
-    public final String audio(final int au)
-    {
-    	String ret = "";
-    	if ((au & 7) == 7) ret = "+++" + getString(R.string.diag_alw);
-    	else
-    	{
-    		if ((au & 1) == 1) ret += " + " + au_v[0];
-    		if ((au & 2) == 2) ret += " + " + au_v[1];
-    		if ((au & 4) == 4) ret += " + " + au_v[2];
+    	    final String[] arr = r.getStringArray(arrId);
+    		if ((flags & 1) == 1) ret += " + " + arr[0];
+    		if ((flags & 2) == 2) ret += " + " + arr[1];
+    		if ((flags & 4) == 4) ret += " + " + arr[2];
     	}
     	if (ret.equals("")) ret = "---" + getString(R.string.diag_nev);
     	return ret.substring(3);

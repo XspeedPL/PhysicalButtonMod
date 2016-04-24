@@ -8,7 +8,7 @@ import android.content.SharedPreferences.Editor;
 public final class Chain
 {
 	public final LinkedList<Key> ks = new LinkedList<Key>();
-	public int vib = 200, rep = 0, au = 7, md = 1, pl = 7, not = 0;
+	public int vib = 200, rep = 0, au = 7, md = 1, pl = 7, tel = 1, not = 0;
 	private int ez = -1;
 	public Action act;
 	public boolean ccl = true, en = true, scr = false;
@@ -40,6 +40,7 @@ public final class Chain
             au = sp.getInt(pref + "au", 7);
             pl = sp.getInt(pref + "pl", 7);
             md = sp.getInt(pref + "md", 1);
+            tel = sp.getInt(pref + "tel", 1);
             ccl = sp.getBoolean(pref + "ccl", true);
             scr = sp.getBoolean(pref + "scr", false);
             not = sp.getInt(pref + "not", 0);
@@ -66,6 +67,7 @@ public final class Chain
         e.putInt(pref + "au", au);
         e.putInt(pref + "pl", pl);
         e.putInt(pref + "md", md);
+        e.putInt(pref + "tel", tel);
         e.putBoolean(pref + "ccl", ccl);
         e.putBoolean(pref + "scr", scr);
         e.putInt(pref + "not", not);

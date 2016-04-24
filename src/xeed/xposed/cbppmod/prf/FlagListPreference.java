@@ -35,7 +35,7 @@ public final class FlagListPreference extends DialogPreference implements OnMult
 	@Override
 	public final void onClick(final DialogInterface di, final int pos)
 	{
-		if (pos == DialogInterface.BUTTON_POSITIVE && shouldPersist()) persistInt(mNewValue);
+		if (pos == DialogInterface.BUTTON_POSITIVE) persistInt(mNewValue);
 	}
 	
 	@Override

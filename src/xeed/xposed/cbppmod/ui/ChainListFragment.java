@@ -32,6 +32,7 @@ public final class ChainListFragment extends Fragment implements DragSortListene
     @Override
     public final View onCreateView(final LayoutInflater li, final ViewGroup vg, final Bundle b)
     {
+        if (pa == null) return null;
         if (!pa.getIterator().hasNext() && PBMain.getActiveVerCode() != 0)
         {
             SimpleDialog.create(getContext(), BaseSettings.getDiagTh(), R.string.diag_yes, R.string.diag_no, R.string.diag_cnf_t, R.string.diag_no_chs, new DialogInterface.OnClickListener()
@@ -138,11 +139,20 @@ public final class ChainListFragment extends Fragment implements DragSortListene
             final ViewGroup keys = (ViewGroup)ll.findViewById(R.id.keys);
             PBMain.populateKeys(keys, li, ch, null);
             ((TextView)ll.findViewById(R.id.name)).setText(ch.nm);
-            ((TextView)ll.findViewById(R.id.desc)).setText(getString(R.string.diag_md) + ": " + pb.mode(ch.md) + ", " + getString(R.string.diag_au) + ": " + pb.audio(ch.au) + ", " + getString(R.string.diag_pl) + ": " + pb.music(ch.pl));
+            ((TextView)ll.findViewById(R.id.desc)).setText(chainDesc(ch));
             return ll;
         }
     }
 
+    public final String chainDesc(final Chain ch)
+    {
+        String ret = getString(R.string.diag_md) + ": " + pb.btnTxt(R.array.md_items, ch.md);
+        ret += ", " + getString(R.string.diag_au) + ": " + pb.btnTxt(R.array.au_items, ch.au);
+        ret += ", " + getString(R.string.diag_pl) + ": " + pb.music(ch.pl);
+        ret += ", " + getString(R.string.diag_tel) + ": " + pb.btnTxt(R.array.tel_items, ch.tel);
+        return ret;
+    }
+    
     @Override
     public final void onItemClick(final AdapterView<?> av, final View v, final int pos, final long id)
     {

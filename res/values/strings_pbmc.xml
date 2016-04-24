@@ -14,10 +14,7 @@
     <string name="diag_nm_hnt">Name this chain</string>
     <string name="diag_add_key">Add key</string>
     <string name="diag_tgl_itc">Change</string>
-    <string name="diag_sel_au">Choose audio modes</string>
-    <string name="diag_sel_md">Choose screen modes</string>
-    <string name="diag_sel_pl">Choose music modes</string>
-    <string name="diag_sel_not">Choose notification modes</string>
+    <string name="diag_sel_mod">Choose %1$s modes</string>
     <string name="diag_edt_itn">Enter custom intent URI</string>
     <string name="diag_itn_err">Entered URI is invalid and couldn\'t be parsed</string>
     <string name="diag_prs_opt">Keypress action options</string>
@@ -32,6 +29,7 @@
     <string name="diag_md">Screen</string>
     <string name="diag_au">Audio</string>
     <string name="diag_pl">Music</string>
+    <string name="diag_tel">Telephony</string>
     <string name="diag_not">Notify</string>
     <string name="diag_act">Action</string>
     <string name="diag_dl">Delay</string>
@@ -82,6 +80,12 @@
     <string-array name="pl_items">
         <item>Music playing</item>
         <item>Music not playing</item>
+    </string-array>
+    
+    <string-array name="tel_items">
+        <item>Idle</item>
+        <item>Ringing</item>
+        <item>In-call</item>
     </string-array>
     
     <string-array name="not_items">
@@ -159,4 +163,10 @@
     
     <string name="pref_sounduri_t">Sound notification</string>
     <string name="pref_sounduri_s">Select a sound to use for chain notifications</string>
+    
+    <string name="pref_pulsecolor_t">Pulse light color</string>
+    <string name="pref_pulsecolor_s">Pick a color to pulse the notification light in</string>
+    
+    <string name="pref_pulsetime_t">Pulse light time</string>
+    <string name="pref_pulsetime_s">Choose how long to pulse the notification light</string>
 </resources>

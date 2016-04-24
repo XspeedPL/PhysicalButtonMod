@@ -38,8 +38,8 @@ public final class Coded
 	public static final class LightService extends Service
 	{
 		private Notification mTorchNotif = null;
-	    private PendingIntent mPendingIntent = null;
 	    private TorchAccess mAccess = null;
+	    private boolean state = false;
 		
 		@Override
 		public final IBinder onBind(final Intent i) { return null; }
@@ -53,16 +53,16 @@ public final class Coded
 			final NotificationCompat.Builder b = new NotificationCompat.Builder(this);
 			b.setContentTitle(getResources().getStringArray(R.array.action_coded_k)[Action.CODED_FLHT]);
 			b.setSmallIcon(android.R.drawable.ic_menu_camera);
-			mPendingIntent = PendingIntent.getService(this, 0, new Intent(this, LightService.class), 0);
-			b.setContentIntent(mPendingIntent);
+			b.setContentIntent(PendingIntent.getService(this, 0, new Intent(this, LightService.class), 0));
 			mTorchNotif = b.build();
 		}
 
 		@Override
 		public final int onStartCommand(final Intent i, final int f, final int id)
 		{
-			if (i != null && i.getAction() == IACT_TOGGLE_LIGHT && mAccess.toggle(true))
+			if (i != null && i.getAction() == IACT_TOGGLE_LIGHT && !state && mAccess.toggle(true))
 			{
+			    state = true;
 			    startForeground(2, mTorchNotif);
 			    return START_REDELIVER_INTENT;
 			}

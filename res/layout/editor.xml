@@ -18,6 +18,12 @@
             android:paddingBottom="5dp"
             android:paddingRight="6dp"
         >
+        	<View
+        	    android:layout_width="0dp"
+        	    android:layout_height="0dp"
+        		android:focusable="true"
+        		android:focusableInTouchMode="true"
+        	/>
 	        <TextView
                 android:layout_width="wrap_content"
 	            android:layout_marginEnd="5dp"
@@ -35,6 +41,8 @@
 	            android:hint="@string/diag_nm_hnt"
                 app:layout_column="1"
                 app:layout_row="0"
+                android:nextFocusUp="@id/ch_nm" 
+    			android:nextFocusLeft="@id/ch_nm"
 	        />
 	        <TextView
                 android:layout_width="wrap_content"
@@ -93,8 +101,8 @@
                 android:orientation="vertical"
                 app:layout_column="1"
                 app:layout_row="3"
-                app:layout_gravity="fill_horizontal"
-                android:paddingBottom="5dp"
+                app:layout_gravity="fill_horizontal|center_vertical"
+                android:layout_margin="2dp"
             >
                 <CheckBox
                     android:id="@+id/ch_rep_md"
@@ -102,15 +110,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                 />
-                <xeed.xposed.cbppmod.viw.TextSeekBar
+                <xeed.library.view.TextSeekBar
                     android:id="@+id/ch_rep"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
+                    android:paddingTop="10dp"
                     android:max="10"
-                    android:text="@string/diag_rep"
-                    app:textSuffix=""
-                    app:textValueMult="1"
                 />
             </LinearLayout>
 	        <TextView
@@ -123,15 +128,16 @@
                 app:layout_row="5"
                 app:layout_gravity="center_vertical"
 	        />
-	        <xeed.xposed.cbppmod.viw.TextSeekBar
+	        <xeed.library.view.TextSeekBar
 	            android:id="@+id/ch_vib"
-	            android:text="@string/diag_vib"
-	            android:max="100"
-	            app:textValueMult="10"
 	            app:textSuffix="ms"
+	            android:max="1000"
+                app:textValueMult="10"
                 app:layout_column="1"
                 app:layout_row="5"
-                app:layout_gravity="fill_horizontal"
+                app:layout_gravity="fill_horizontal|center_vertical"
+                android:layout_margin="2dp"
+                android:paddingTop="10dp"
 	        />
 	        <TextView
                 android:layout_width="wrap_content"
@@ -188,38 +194,55 @@
                 android:layout_width="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
-                android:text="@string/diag_not"
+                android:text="@string/diag_tel"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 app:layout_column="0"
                 app:layout_row="9"
                 app:layout_gravity="center_vertical"
             />
             <Button
+                android:id="@+id/ch_tel"
+                android:text="@string/diag_tel"
+                app:layout_column="1"
+                app:layout_row="9"
+                app:layout_gravity="fill_horizontal"
+            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:text="@string/diag_not"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_column="0"
+                app:layout_row="10"
+                app:layout_gravity="center_vertical"
+            />
+            <Button
                 android:id="@+id/ch_not"
                 android:text="@string/diag_not"
                 app:layout_column="1"
-                app:layout_row="9"
+                app:layout_row="10"
                 app:layout_gravity="fill_horizontal"
             />
             <CheckBox
                 android:id="@+id/ch_scr"
                 app:layout_column="0"
                 app:layout_columnSpan="2"
-                app:layout_row="10"
+                app:layout_row="11"
                 android:text="@string/diag_scr"
             />
     	    <CheckBox
     	        android:id="@+id/ch_ccl"
     	        app:layout_column="0"
     	        app:layout_columnSpan="2"
-    	        app:layout_row="11"
+    	        app:layout_row="12"
     	        android:text="@string/diag_ccl"
             />
             <Button
                 android:id="@+id/ch_adv_cnv"
                 app:layout_column="0"
                 app:layout_columnSpan="2"
-                app:layout_row="12"
+                app:layout_row="13"
                 app:layout_gravity="fill_horizontal"
                 android:text="@string/diag_adv_cnv"
             />

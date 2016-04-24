@@ -1,6 +1,7 @@
 package xeed.xposed.cbppmod.ui;
 
 import java.util.ListIterator;
+
 import android.content.*;
 import android.content.DialogInterface.*;
 import android.os.Bundle;
@@ -47,7 +48,8 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
     @Override
     public final void onDestroy()
     {
-        pb.unregisterReceiver(br);
+        try { pb.unregisterReceiver(br); }
+        catch (final Exception ex) { }
         super.onDestroy();
     }
     
@@ -62,17 +64,25 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         bt.setText(PBMain.action(pa.edit.act));
         bt.setOnClickListener(this);
         bt = (Button)ret.findViewById(R.id.ch_md);
-        bt.setText(pb.mode(pa.edit.md));
+        bt.setText(pb.btnTxt(R.array.md_items, pa.edit.md));
         bt.setOnClickListener(this);
+        bt.setTag(Boolean.TRUE);
         bt = (Button)ret.findViewById(R.id.ch_au);
-        bt.setText(pb.audio(pa.edit.au));
+        bt.setText(pb.btnTxt(R.array.au_items, pa.edit.au));
         bt.setOnClickListener(this);
+        bt.setTag(Boolean.TRUE);
         bt = (Button)ret.findViewById(R.id.ch_pl);
         bt.setText(pb.music(pa.edit.pl));
         bt.setOnClickListener(this);
+        bt.setTag(Boolean.TRUE);
+        bt = (Button)ret.findViewById(R.id.ch_tel);
+        bt.setText(pb.btnTxt(R.array.tel_items, pa.edit.tel));
+        bt.setOnClickListener(this);
+        bt.setTag(Boolean.TRUE);
         bt = (Button)ret.findViewById(R.id.ch_not);
         bt.setText(pb.notify(pa.edit.not));
         bt.setOnClickListener(this);
+        bt.setTag(Boolean.TRUE);
         ((Button)ret.findViewById(R.id.ch_adv_cnv)).setOnClickListener(this);
         ((CheckBox)ret.findViewById(R.id.ch_ccl)).setOnCheckedChangeListener(this);
         ((CheckBox)ret.findViewById(R.id.ch_rep_md)).setOnCheckedChangeListener(this);
@@ -89,65 +99,103 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         onChange(false);
     }
 
+    private final void showMultiDialog(final Button src, final int title, final int arr, int val)
+    {
+        final AlertDialog.Builder b = new AlertDialog.Builder(pb, BaseSettings.getDiagTh());
+        b.setTitle(title);
+        final boolean[] data = new boolean[3];
+        for (int i = 0; i < 3; ++i)
+        {
+            data[i] = (val & 1) == 1;
+            val >>= 1;
+        }
+        b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public final void onClick(final DialogInterface di, final int pos)
+            {
+                int x = 0;
+                for (int i = 2; i >= 0; --i)
+                    x = (x << 1) | (data[i] ? 1 : 0);
+                if (src.getId() == R.id.ch_md)
+                {
+                    pa.edit.md = x;
+                    src.setText(pb.btnTxt(R.array.md_items, pa.edit.md));
+                }
+                else if (src.getId() == R.id.ch_au)
+                {
+                    pa.edit.au = x;
+                    src.setText(pb.btnTxt(R.array.au_items, pa.edit.au));
+                }
+                else if (src.getId() == R.id.ch_pl)
+                {
+                    pa.edit.pl = x;
+                    src.setText(pb.music(pa.edit.pl));
+                }
+                else if (src.getId() == R.id.ch_tel)
+                {
+                    pa.edit.tel = x;
+                    src.setText(pb.btnTxt(R.array.tel_items, pa.edit.tel));
+                }
+                else if (src.getId() == R.id.ch_not)
+                {
+                    pa.edit.not = x;
+                    src.setText(pb.notify(pa.edit.not));
+                }
+                onChange(false);
+            }
+        });
+        b.setNegativeButton(R.string.diag_cancel, null);
+        b.setMultiChoiceItems(arr, data, new OnMultiChoiceClickListener()
+        {
+            @Override
+            public final void onClick(final DialogInterface di, final int pos, final boolean f)
+            {
+                data[pos] = f;
+            }
+        });
+        b.create().show();
+    }
+    
     @Override
     public final void onClick(final View v)
     {
-        final int multi;
-        if (v.getId() == R.id.ch_md) multi = 1;
-        else if (v.getId() == R.id.ch_au) multi = 2;
-        else if (v.getId() == R.id.ch_pl) multi = 3;
-        else if (v.getId() == R.id.ch_not) multi = 4;
-        else multi = 0;
         if (v.getId() == R.id.ch_act)
             new ActionDialog(this, pa.edit.act, BaseSettings.getDiagTh()).show();
-        else if (multi > 0)
+        else if (v.getTag() == Boolean.TRUE)
         {
-            final AlertDialog.Builder b = new AlertDialog.Builder(pb, BaseSettings.getDiagTh());
-            b.setTitle(multi == 1 ? R.string.diag_sel_md : multi == 2 ? R.string.diag_sel_au : multi == 3 ? R.string.diag_sel_pl : R.string.diag_sel_not);
-            final boolean[] arr = new boolean[3];
-            for (int x = multi == 1 ? pa.edit.md : multi == 2 ? pa.edit.au : multi == 3 ? pa.edit.pl : pa.edit.not, i = 0; i < 3; ++i, x >>= 1)
-                arr[i] = (x & 1) == 1;
-            b.setPositiveButton(R.string.diag_ok, new DialogInterface.OnClickListener()
+            final int title, arr, val;
+            if (v.getId() == R.id.ch_md)
             {
-                @Override
-                public final void onClick(final DialogInterface di, final int pos)
-                {
-                    int x = 0;
-                    for (int i = 2; i >= 0; --i)
-                        x = (x << 1) | (arr[i] ? 1 : 0);
-                    if (multi == 1)
-                    {
-                        pa.edit.md = x;
-                        ((Button)v).setText(pb.mode(pa.edit.md));
-                    }
-                    else if (multi == 2)
-                    {
-                        pa.edit.au = x;
-                        ((Button)v).setText(pb.audio(pa.edit.au));
-                    }
-                    else if (multi == 3)
-                    {
-                        pa.edit.pl = x;
-                        ((Button)v).setText(pb.music(pa.edit.pl));
-                    }
-                    else
-                    {
-                        pa.edit.not = x;
-                        ((Button)v).setText(pb.notify(pa.edit.not));
-                    }
-                    onChange(false);
-                }
-            });
-            b.setNegativeButton(R.string.diag_cancel, null);
-            b.setMultiChoiceItems(multi == 1 ? R.array.md_items : multi == 2 ? R.array.au_items : multi == 3 ? R.array.pl_items : R.array.not_items, arr, new OnMultiChoiceClickListener()
+                title = R.string.diag_md;
+                arr = R.array.md_items;
+                val = pa.edit.md;
+            }
+            else if (v.getId() == R.id.ch_au)
             {
-                @Override
-                public final void onClick(final DialogInterface di, final int pos, final boolean f)
-                {
-                    arr[pos] = f;
-                }
-            });
-            b.create().show();
+                title = R.string.diag_au;
+                arr = R.array.au_items;
+                val = pa.edit.au;
+            }
+            else if (v.getId() == R.id.ch_pl)
+            {
+                title = R.string.diag_pl;
+                arr = R.array.pl_items;
+                val = pa.edit.pl;
+            }
+            else if (v.getId() == R.id.ch_tel)
+            {
+                title = R.string.diag_tel;
+                arr = R.array.tel_items;
+                val = pa.edit.tel;
+            }
+            else
+            {
+                title = R.string.diag_not;
+                arr = R.array.not_items;
+                val = pa.edit.not;
+            }
+            showMultiDialog((Button)v, title, arr, val);
         }
         else if (v.getId() == R.id.add_key) keyDialog(new Key(0, false, 0), 1);
         else if (v.getId() == R.id.ch_ez)
@@ -271,9 +319,11 @@ public final class ChainEditFragment extends Fragment implements OnFocusChangeLi
         ((AutoCompleteTextView)vg.findViewById(R.id.ch_nm)).setText(pa.edit.nm);
         PBMain.populateKeys((ViewGroup)vg.findViewById(R.id.keys), LayoutInflater.from(pb), pa.edit, ChainEditFragment.this);
         ((Button)vg.findViewById(R.id.ch_act)).setText(PBMain.action(pa.edit.act));
-        ((Button)vg.findViewById(R.id.ch_md)).setText(pb.mode(pa.edit.md));
-        ((Button)vg.findViewById(R.id.ch_au)).setText(pb.audio(pa.edit.au));
+        ((Button)vg.findViewById(R.id.ch_md)).setText(pb.btnTxt(R.array.md_items, pa.edit.md));
+        ((Button)vg.findViewById(R.id.ch_au)).setText(pb.btnTxt(R.array.au_items, pa.edit.au));
         ((Button)vg.findViewById(R.id.ch_pl)).setText(pb.music(pa.edit.pl));
+        ((Button)vg.findViewById(R.id.ch_tel)).setText(pb.btnTxt(R.array.tel_items, pa.edit.tel));
+        ((Button)vg.findViewById(R.id.ch_not)).setText(pb.notify(pa.edit.not));
         ((Button)vg.findViewById(R.id.ch_adv_cnv)).setVisibility(pa.edit.isEz() ? View.VISIBLE : View.GONE);
         ((CheckBox)vg.findViewById(R.id.ch_ccl)).setChecked(pa.edit.ccl);
         ((CheckBox)vg.findViewById(R.id.ch_scr)).setChecked(pa.edit.scr);

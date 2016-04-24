@@ -1,37 +1,26 @@
 package xeed.xposed.cbppmod.viw;
 
-import com.mobeta.android.dslv.DragSortListView;
+import com.mobeta.android.dslv.*;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.AttributeSet;
+import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 @SuppressLint("ClickableViewAccessibility")
-public final class CustomListView extends DragSortListView implements OnGestureListener
+public final class CustomListView extends DragSortListView implements GestureDetector.OnGestureListener
 {
-	private final GestureDetector gd_it, gd_i;
+	private final GestureDetectorCompat gd_i, gd_it;
 	
 	public CustomListView(final Context c, final AttributeSet as)
 	{
 		super(c, as);
-		gd_it = new GestureDetector(c, this);
-		gd_i = new GestureDetector(c, this);
-		gd_it.setIsLongpressEnabled(false);
-		gd_i.setIsLongpressEnabled(false);
-	}
-	
-	@Override
-	public final boolean onTouchEvent(final MotionEvent e)
-	{
-		return gd_i.onTouchEvent(e) || super.onTouchEvent(e);
-	}
-	
-	@Override
-	public final boolean onInterceptTouchEvent(final MotionEvent e)
-	{
-		return gd_it.onTouchEvent(e) || super.onInterceptTouchEvent(e);
+        gd_i = new GestureDetectorCompat(c, this);
+        gd_i.setIsLongpressEnabled(false);
+        gd_it = new GestureDetectorCompat(c, this);
+        gd_it.setIsLongpressEnabled(false);
 	}
 
 	@Override
@@ -52,6 +41,18 @@ public final class CustomListView extends DragSortListView implements OnGestureL
 		return false;
 	}
 
+	@Override
+	public final boolean onTouchEvent(final MotionEvent e)
+	{
+        return gd_i.onTouchEvent(e) || super.onTouchEvent(e);
+	}
+	
+	@Override
+	public final boolean onInterceptTouchEvent(final MotionEvent e)
+	{
+	    return gd_it.onTouchEvent(e) || super.onInterceptTouchEvent(e);
+	}
+	
 	@Override
 	public final boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX, final float distanceY) { return false; }
 

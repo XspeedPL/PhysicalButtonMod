@@ -2,9 +2,4 @@
 <resources>
     <item name="ch_ez" type="id" />
     <item name="add_key" type="id" />
-    
-    <declare-styleable name="TextSeekBar">
-       <attr name="textValueMult" format="integer" />
-       <attr name="textSuffix" format="string" />
-   </declare-styleable>
 </resources>
