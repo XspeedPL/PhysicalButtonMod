@@ -114,7 +114,6 @@
                     android:id="@+id/ch_rep"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
                     android:max="10"
                 />
             </LinearLayout>
@@ -137,7 +136,6 @@
                 app:layout_row="5"
                 app:layout_gravity="fill_horizontal|center_vertical"
                 android:layout_margin="2dp"
-                android:paddingTop="10dp"
 	        />
 	        <TextView
                 android:layout_width="wrap_content"

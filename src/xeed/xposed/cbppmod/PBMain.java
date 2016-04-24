@@ -166,7 +166,7 @@ public final class PBMain extends AppCompatActivity
 	protected final void onResume()
 	{
 	    super.onResume();
-	    if (th != BaseSettings.getActTh()) recreate();
+	    if (th != BaseSettings.getActTh()) finish();
 	}
 
 	@Override

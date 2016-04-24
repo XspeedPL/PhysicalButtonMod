@@ -16,6 +16,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
             android:progressDrawable="@drawable/red_progress"
+            android:progressTint="#ff0000"
         />
         <xeed.library.view.TextSeekBar
             android:layout_width="fill_parent"
@@ -27,6 +28,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
             android:progressDrawable="@drawable/green_progress"
+            android:progressTint="#00ff00"
         />
         <xeed.library.view.TextSeekBar
             android:layout_width="fill_parent"
@@ -38,5 +40,6 @@
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
             android:progressDrawable="@drawable/blue_progress"
+            android:progressTint="#0000ff"
         />
     </LinearLayout>
