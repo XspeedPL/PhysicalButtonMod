@@ -228,8 +228,9 @@ public final class PBMain extends AppCompatActivity
 	        {
 	            final Chain ch = li.next();
 	            e.putString("chainlist." + n, ch.nm);
-                if (ch.nm.length() > 0) ch.save(e);
-                else Toast.makeText(this, R.string.diag_nm_err, Toast.LENGTH_LONG).show();
+                if (ch.nm.length() < 1) Toast.makeText(this, R.string.diag_nm_err, Toast.LENGTH_LONG).show();
+                else if (ch.ks.size() < 1) Toast.makeText(this, R.string.diag_ks_err, Toast.LENGTH_LONG).show();
+                else ch.save(e);
 	            ++n;
 	        }
 	        e.putInt("chainlist.count", n);

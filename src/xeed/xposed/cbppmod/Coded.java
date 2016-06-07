@@ -1,18 +1,20 @@
 package xeed.xposed.cbppmod;
 
+import java.util.Arrays;
 import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.*;
 import android.content.*;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.camera2.*;
-import android.os.Build;
-import android.os.IBinder;
+import android.os.*;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
+import de.robv.android.xposed.XposedHelpers;
 
 @SuppressWarnings("deprecation")
 public final class Coded
@@ -20,6 +22,9 @@ public final class Coded
     public static final int SDK = Build.VERSION.SDK_INT;
     
 	public static final String IACT_TOGGLE_LIGHT = "xeed.xposed.cbppmod.TOGGLE_LIGHT";
+	private static Context app = null;
+	
+	public static final void setAppCtx(final Context c) { app = c; }
 	
 	public static final class AppBridge extends BroadcastReceiver
 	{
@@ -48,6 +53,7 @@ public final class Coded
 		public final void onCreate()
 		{
 			super.onCreate();
+			if (app == null) app = this;
 			if (SDK > 22) mAccess = new TorchNew();
 			else mAccess = new TorchOld();
 			final NotificationCompat.Builder b = new NotificationCompat.Builder(this);
@@ -144,12 +150,12 @@ public final class Coded
                             return on;
                         }
                     }
-                    showError(LightService.this, "No flash");
+                    showError("No flash");
                     return !on;
                 }
                 catch (final Exception ex)
                 {
-                    showError(LightService.this, ex.getLocalizedMessage());
+                    showError(ex.getLocalizedMessage());
                     return !on;
                 }
 		    }
@@ -169,20 +175,19 @@ public final class Coded
 		Runtime.getRuntime().exec(new String[] { "setprop", "ctl.restart", "zygote" }).waitFor();
 	}
 	
-    @TargetApi(12)
-	public static final void switchToLastApp(final Context c, final ActivityManager am)
+    @TargetApi(11)
+	public static final void switchToLastApp(final Context c)
 	{
 		if (SDK > 10)
 		{
+		    final ActivityManager am = (ActivityManager)c.getSystemService(Context.ACTIVITY_SERVICE);
 			int lastAppId = 0;
 			final Intent intent = new Intent(Intent.ACTION_MAIN);
 			String homePackage = "com.android.launcher";
 			intent.addCategory(Intent.CATEGORY_HOME);
 			final ResolveInfo res = c.getPackageManager().resolveActivity(intent, 0);
 			if (res.activityInfo != null && !res.activityInfo.packageName.equals("android"))
-			{
 				homePackage = res.activityInfo.packageName;
-			}
 			final List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(5);
 			for (int i = 1; i < tasks.size(); ++i)
 			{
@@ -193,17 +198,26 @@ public final class Coded
 					break;
 				}
 			}
-			if (lastAppId != 0)
-			{
-				am.moveTaskToFront(lastAppId, SDK > 11 ? ActivityManager.MOVE_TASK_NO_USER_ACTION : 0);
-				return;
-			}
+			if (lastAppId != 0) am.moveTaskToFront(lastAppId, 0);
 		}
-		showError(c, "Android ver < 11");
+		else showError(app.getString(R.string.diag_and_req, "11 (Honeycomb)"));
     }
 	
-	private static final void showError(final Context c, final String txt)
+    public static final void killForeground(final Context c, final String topPkg, final String data)
+    {
+        try
+        {
+            final List<String> wlist = Arrays.asList(data.split(" "));
+            if (wlist.contains(topPkg)) return;
+            final ApplicationInfo ai = c.getPackageManager().getApplicationInfo(topPkg, 0);
+            XposedHelpers.callMethod(c.getSystemService(Context.ACTIVITY_SERVICE), "forceStopPackage", topPkg);
+            Toast.makeText(c, app.getString(R.string.diag_kill, ai.loadLabel(c.getPackageManager()).toString()), Toast.LENGTH_SHORT).show();
+        }
+        catch (final Exception ex) { showError(ex.getLocalizedMessage()); }
+    }
+    
+	private static final void showError(final String txt)
 	{
-	    Toast.makeText(c, "ERROR: " + txt, Toast.LENGTH_SHORT).show();
+	    Toast.makeText(app, "ERROR: " + txt, Toast.LENGTH_SHORT).show();
 	}
 }

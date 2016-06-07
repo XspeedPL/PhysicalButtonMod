@@ -14,11 +14,13 @@
     <string name="diag_nm_hnt">Name this chain</string>
     <string name="diag_add_key">Add key</string>
     <string name="diag_tgl_itc">Change</string>
-    <string name="diag_sel_mod">Choose %1$s modes</string>
     <string name="diag_edt_itn">Enter custom intent URI</string>
     <string name="diag_itn_err">Entered URI is invalid and couldn\'t be parsed</string>
     <string name="diag_prs_opt">Keypress action options</string>
+    <string name="diag_kill_opt">Whitelisted apps</string>
+    <string name="diag_kill">App \'%1$s\' killed</string>
     <string name="diag_nm_err">One of the chains doesn\'t have a name and wasn\'t saved</string>
+    <string name="diag_ks_err">One of the chains doesn\'t have any keys and wasn\'t saved</string>
     <string name="diag_nm_exs">Another chain with the same name exists, changes reverted</string>
     <string name="diag_no_chs">It seems you don\'t have any key chains set yet. Would you like to add some basic ones?</string>
     <string name="diag_and_req">Android version %1$s or newer is required</string>
@@ -136,6 +138,7 @@
         <item>Soft reboot</item>
         <item>Toggle flashlight</item>
         <item>Switch to previous app</item>
+        <item>Kill foreground app</item>
     </string-array>
 
     <string name="pref_useplugin_t">Plug &amp; Play</string>

@@ -53,7 +53,7 @@
             app:maxValue="1000"
             android:summary="@string/pref_pulsetime_s"
             android:title="@string/pref_pulsetime_t"
-            android:defaultValue="100"
+            android:defaultValue="200"
             app:textValueMult="10"
         />
 </PreferenceScreen>

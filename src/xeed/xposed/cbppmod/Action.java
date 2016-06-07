@@ -17,7 +17,7 @@ public final class Action
 	public static final int MEDIA_REWD = KeyEvent.KEYCODE_MEDIA_REWIND;
 	public static final int[] MEDIA = new int[] { MEDIA_PLAY, MEDIA_NEXT, MEDIA_PREV, MEDIA_VOUP, MEDIA_VODN, MEDIA_FORV, MEDIA_REWD };
 	
-	public static final int CODED_SRBT = 0, CODED_FLHT = 1, CODED_PAPP = 2;
+	public static final int CODED_SRBT = 0, CODED_FLHT = 1, CODED_PAPP = 2, CODED_KFGD = 3;
 	
 	public static final String OTHER_SPLT = " <-> ";
 	

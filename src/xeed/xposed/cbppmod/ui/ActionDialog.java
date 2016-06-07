@@ -14,8 +14,11 @@ import android.view.*;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import xeed.library.common.AppInfo;
+import xeed.library.common.Utils;
 import xeed.library.ui.AppDialog;
+import xeed.library.ui.BaseSettings;
 import xeed.library.ui.FilteredAdapter;
+import xeed.library.view.AppListView;
 import xeed.xposed.cbppmod.*;
 
 public final class ActionDialog
@@ -175,6 +178,61 @@ public final class ActionDialog
 				public final void onClick(final DialogInterface di, final int i)
 				{
 					if (i == Action.CODED_PAPP && Build.VERSION.SDK_INT < 11) Toast.makeText(cef.getContext(), cef.getString(R.string.diag_and_req, "11 (Honeycomb)"), Toast.LENGTH_LONG).show();
+					else if (i == Action.CODED_KFGD)
+					{
+					    di.dismiss();
+					    final LinearLayout ll = new LinearLayout(cef.getContext());
+					    ll.setOrientation(LinearLayout.VERTICAL);
+					    final AppListView alv = new AppListView(cef.getContext());
+					    ll.addView(alv);
+					    final Button btn = new Button(cef.getContext());
+					    btn.setText(R.string.btn_add_new);
+					    btn.setOnClickListener(new View.OnClickListener()
+					    {
+                            @Override
+                            public final void onClick(final View v)
+                            {
+                                AppDialog.create(cef.getContext(), new AppDialog.AppInfoCollector<String>()
+                                {
+                                    @Override
+                                    public final ArrayList<AppInfo<String>> collectAsync(final PackageManager pm, final AppDialog.ProgressListener task)
+                                    {
+                                        final List<ApplicationInfo> pkgs = pm.getInstalledApplications(0);
+                                        final ArrayList<AppInfo<String>> res = new ArrayList<AppInfo<String>>(pkgs.size());
+                                        task.postProgress(0, pkgs.size());
+                                        for (int i = 0; i < pkgs.size(); ++i)
+                                        {
+                                            final ApplicationInfo appi = pkgs.get(i);
+                                            final AppInfo<String> ai = new AppInfo<String>(appi.packageName);
+                                            ai.icon = appi.loadIcon(pm);
+                                            ai.label = appi.loadLabel(pm).toString();
+                                            res.add(ai);
+                                            task.postProgress(1, i + 1);
+                                        }
+                                        return res;
+                                    }
+                                }, new AppDialog.AppInfoListener<String>()
+                                {
+                                    @Override
+                                    public final void onDialogResult(final AppInfo<String> ai)
+                                    {
+                                        alv.addItem(ai);
+                                    }
+                                }, BaseSettings.getDiagTh()).show();
+                            }
+					    });
+					    ll.addView(btn);
+					    alv.setData(Utils.deserialize(a.type == Action.ACTION_CODED && a.ex_i == Action.CODED_KFGD ? a.ex_s : ""));
+                        createEditDialog(R.string.diag_kill_opt, ll, new EditFinishedListener()
+                        {
+                            @Override
+                            public final void onClick(final DialogInterface di)
+                            {
+                                change(Action.ACTION_CODED, Action.CODED_KFGD, Utils.serialize(alv.getData()));
+                                di.dismiss();
+                            }
+                        });
+					}
 					else
 					{
 						di.dismiss();
